@@ -1,0 +1,8 @@
+/* src/fonts.css */
+@font-face {
+    font-family: 'Gilroy';
+    src: url('./fonts/Gilroy-Semibold.ttf') format('truetype');
+    font-weight: 600; /* Semibold weight */
+    font-style: normal;
+  }
+  

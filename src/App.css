@@ -1,38 +1,143 @@
-.App {
-  text-align: center;
+/* src/fonts.css */
+@font-face {
+  font-family: 'Gilroy';
+  src: url('gilroy-semibold.ttf') format('truetype');
+  font-weight: 600; /* Semibold weight */
+  font-style: normal;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* General styles for the calendar tiles */
+.react-calendar__tile {
+  box-sizing: border-box; 
+  width: 10px;
+  height: 70px;
   display: flex;
-  flex-direction: column;
+  align-items: flex-end; /* Aligns items to the bottom */
+  justify-content: flex-end; /* Aligns items to the right */
+  border: 1.2px solid rgba(237, 234, 254, 1); 
+  font-size: 9px;
+  padding-top: 7px;
+  padding-right: 7px;
+  background-color: white;
+  color: rgb(119, 118, 118);
+  border-radius: 2.8px;
+  font-weight: bold;
+  position: relative;
+}
+
+/* Styling for the day number */
+.react-calendar__tile abbr {
+  position: absolute;
+  top: 5px; /* Adjust vertical position */
+  right: 5px; /* Adjust horizontal position */
+  font-size: 1.2em; /* Adjust the size of the day number */
+}
+
+/* Navigation bar for the calendar */
+.react-calendar__navigation {
+  background-color: white;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+/* Weekday labels styling */
+.react-calendar__month-view__weekdays {
+  display: flex;
+  justify-content: space-between; /* Space between weekdays */
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: rgba(128, 107, 244, 1);
+  border: 1.2px solid rgba(237, 234, 254, 1);
+  border-radius: 5px;
+  margin-bottom: 0;
+  background-color: rgba(240, 239, 253, 1);
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
-.App-link {
-  color: #61dafb;
+/* Styling each weekday */
+.react-calendar__month-view__weekdays div {
+  flex: 1; /* Each weekday takes equal space */
+  text-align: center; /* Centers text horizontally */
+  font-size: 14px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Calendar dimensions */
+.react-calendar {
+  width: 550px;
+  height: 400px;
+}
+
+/* Styling for events inside the calendar tiles */
+.event-css {
+  background-color: rgba(229, 249, 253, 1);
+  margin-top: 20px;
+  margin-bottom: 12px;
+  color: rgba(39, 196, 255, 1);
+  font-size: 10px;
+}
+
+/* Layout styling for calendar and upcoming events */
+.calendar-and-upc-events-css {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Hide double arrows in navigation */
+.react-calendar__navigation__arrow.react-calendar__navigation__prev2-button,
+.react-calendar__navigation__arrow.react-calendar__navigation__next2-button {
+  display: none;
+}
+
+/* Align single arrows to the right */
+.react-calendar__navigation {
+  display: flex;
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+/* Push the date label to the left */
+.react-calendar__navigation__label {
+  margin-right: auto;
+}
+
+/* Layout styling for search calendar */
+.search-calendar {
+  /*display: flex; */
+}
+
+/* Styling for search icon and text */
+.search-icon-text-css {
+  display: flex; /* Horizontal alignment */
+  justify-content: space-between; /* Space between items */
+  align-items: center; /* Vertically center items */
+}
+
+/* Background gradient */
+.gradient-background {
+  height: 100vh;
+  background: linear-gradient(20deg, rgba(225, 241, 247, 1), rgba(250, 245, 234, 1), rgba(245, 247, 248, 1));
+  border: 10px;
+  padding-top: 20px;
+  padding-right: 20px;
+  padding-left: 20px;
+  padding-bottom: 20px;
+}
+
+.upcoming-event-css {
+  background-color: white;
+  border-radius: 13px;
+}
+
+.icon-calendar-text-css {
+  display: flex;
+  gap: 8px;
+}
+
+/* src/App.css or styles.css */
+.upcoming-events {
+  font-family: 'Gilroy', sans-serif;
+  font-weight: 600;
+  font-size: 24px;
 }
