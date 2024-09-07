@@ -168,6 +168,7 @@
 .icon-calendar-text-css {
   display: flex;
   gap: 15px;
+  align-items: center;
 }
 
 /* src/App.css */
@@ -185,6 +186,13 @@ body, .upcoming-events {
   background-color: white;
   border-radius: 4px;
   font-size: 16px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.button-calendar-icon-css {
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
 }
 
 .calendar-text-css {
@@ -207,6 +215,13 @@ body, .upcoming-events {
   padding-right: 10px;
   padding-bottom: 8px;
   border-radius: 4px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease; 
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+}
+
+.button-search-icon-css:hover {
+  opacity: 0.6;
 }
 
 .line-css {
@@ -226,6 +241,7 @@ body, .upcoming-events {
   max-width: 100%; /* Ensures it doesn't exceed the parent's width */
   max-height: 100%; /* Ensures it doesn't exceed the parent's height */
   overflow: auto; 
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
   
 }
 
@@ -345,3 +361,40 @@ body, .upcoming-events {
   background-color: rgba(225, 221, 247, 1); /* Lighter background when hovering */
   color: rgba(39, 196, 255, 1); /* Change text color on hover */
 }
+
+/* Styling the search input */
+.input-search-css {
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid rgba(131, 109, 244, 0.3);
+  background-color: rgba(239, 236, 251, 0.8);
+  font-size: 14px;
+  color: rgba(60, 60, 60, 1);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  outline: none; /* Remove default outline */
+  width: 100%; /* Adjust the width to match the container */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+  flex-grow: 1;
+  
+}
+
+.input-search-css:focus {
+  background-color: white; /* Highlight on focus */
+  border-color: rgba(131, 109, 244, 1);
+}
+
+.search-bar-css {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.input-search-css::placeholder {
+  font-style: italic;
+  color: rgba(0, 0, 0, 0.5); /* Transparent black, adjust as needed */
+  opacity: 0.6;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+}
+
+

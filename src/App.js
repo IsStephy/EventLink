@@ -32,8 +32,8 @@ class Event {
     this.descriere = descriere;
     this.data = data;
     this.tip = tip;
-    this.organizer = organizer; 
-    this.place = place;         
+    this.organizer = organizer;
+    this.place = place;
   }
 }
 
@@ -59,6 +59,30 @@ function UpcomingEvents({ events }) {
   );
 }
 
+// Component to display filtered events
+function FilteredEvents({ events }) {
+  return (
+    <div>
+      {events.length > 0 ? (
+        events.map((event, index) => (
+          <div key={index} className='filtered-event-css'>
+            <h4>Title: {event.titlu}</h4>
+            <p className='filtered-event-paragraph-css'>
+              Description: {event.descriere}<br />
+              Date: {event.data.toDateString()}<br />
+              Type: {event.tip}<br />
+              Organizer: {event.organizer.nume}<br />
+              Place: {event.place.oras}, {event.place.strada}
+            </p>
+          </div>
+        ))
+      ) : (
+        <p>No events found.</p>
+      )}
+    </div>
+  );
+}
+
 // FontAwesome Icons
 const SearchIcon = () => (
   <div>
@@ -66,14 +90,10 @@ const SearchIcon = () => (
   </div>
 );
 
-const CalendarIcon = () => (
-  <div>
-    <FontAwesomeIcon icon={faCalendarAlt} className="calendar-icon-css" />
-  </div>
-);
 
 // Main App Component
 function App() {
+  const [inputValue, setInputValue] = useState('');
   const [events, setEvents] = useState([
     new Event(
       1,
@@ -96,6 +116,9 @@ function App() {
   ]);
 
   const [calendarEvents, setCalendarEvents] = useState({});
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [searchPerformed, setSearchPerformed] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(true); // Added state to control calendar visibility
 
   useEffect(() => {
     const eventsByDate = events.reduce((accumulation, event) => {
@@ -109,6 +132,19 @@ function App() {
 
     setCalendarEvents(eventsByDate);
   }, [events]);
+
+  // Function to handle the search click
+  const handleSearchClick = () => {
+    const searchQuery = inputValue.toLowerCase();
+    const filtered = events.filter(event =>
+      event.titlu.toLowerCase().includes(searchQuery) ||
+      event.descriere.toLowerCase().includes(searchQuery) ||
+      event.organizer.nume.toLowerCase().includes(searchQuery)
+    );
+    setFilteredEvents(filtered); // Update filtered events
+    setSearchPerformed(true); // Indicate that search has been performed
+    setShowCalendar(false); // Hide calendar after search
+  };
 
   // Function to render event details on the calendar
   const tileContent = ({ date, view }) => {
@@ -129,6 +165,19 @@ function App() {
     ) : null;
   };
 
+  // Function to handle the calendar button click
+  const handleCalendarClick = () => {
+    setShowCalendar(true); // Show the calendar
+    setSearchPerformed(false); // Reset search state
+  };
+
+  // CalendarIcon Component
+  const CalendarIcon = () => (
+    <button className='button-calendar-icon-css' onClick={handleCalendarClick}>
+      <FontAwesomeIcon icon={faCalendarAlt} className="calendar-icon-css" />
+    </button>
+  );
+
   return (
     <div className='purple-container-css'>
       <div className="gradient-background">
@@ -145,15 +194,25 @@ function App() {
                 <CalendarIcon />
                 <div className='calendar-text-css'>Calendar</div>
               </div>
-              <div>
-                <button className='button-search-icon-css'>
+              <div className='search-bar-css'>
+                <input 
+                  value={inputValue} 
+                  onChange={(e) => setInputValue(e.target.value)} 
+                  className='input-search-css' 
+                  placeholder="Search for event"
+                />
+                <button className='button-search-icon-css' onClick={handleSearchClick}>
                   <SearchIcon />
                 </button>
               </div>
             </div>
-            <hr className='line-css'></hr>
-            <div className='calendar-css'>
-              <Calendar tileContent={tileContent} />
+            <hr className='line-css' />
+            <div className='calendar-or-events'>
+              {searchPerformed ? (
+                <FilteredEvents events={filteredEvents} />
+              ) : showCalendar ? (
+                <div className='calendar-css'><Calendar tileContent={tileContent}/> </div>
+              ) : null}
             </div>
           </div>
 
