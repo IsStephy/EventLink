@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import './App.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendar, faSearch, faCalendarCheck, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 
 // Class representing a Place
 class Place {
@@ -90,6 +90,11 @@ const SearchIcon = () => (
   </div>
 );
 
+const CalendarIcon = ({ onClick }) => (
+  <button className='button-calendar-icon-css' onClick={onClick}>
+    <FontAwesomeIcon icon={faCalendarAlt} className="calendar-icon-css" />
+  </button>
+);
 
 // Main App Component
 function App() {
@@ -100,7 +105,7 @@ function App() {
       'Lecture',
       'A lecture on modern web development.',
       new Date(2024, 8, 4),
-      'Mandatory',
+      'Obligatoriu',
       new Organizer(1, new Date(2024, 8, 1), 'Tech University', 'Education'),
       new Place(1, 'Central', 'City A', 'Main Street 123')
     ),
@@ -109,7 +114,7 @@ function App() {
       "Programmer's Day",
       'An event to celebrate programmers.',
       new Date(2024, 8, 14),
-      'Optional',
+      'Opționaln',
       new Organizer(2, new Date(2024, 8, 20), 'Tech Corp', 'Technology'),
       new Place(2, 'West', 'City B', 'Tech Park 456')
     )
@@ -118,7 +123,9 @@ function App() {
   const [calendarEvents, setCalendarEvents] = useState({});
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
-  const [showCalendar, setShowCalendar] = useState(true); // Added state to control calendar visibility
+  const [showCalendar, setShowCalendar] = useState(true); 
+  const [showUpcomingEvents, setUpcomingEvents] = useState(true);
+  const [showEventFromCalendar, setEventFromCalendar] = useState(null);
 
   useEffect(() => {
     const eventsByDate = events.reduce((accumulation, event) => {
@@ -146,6 +153,11 @@ function App() {
     setShowCalendar(false); // Hide calendar after search
   };
 
+  const handleEventCalendarClick = (event) => {
+    setUpcomingEvents(false);
+    setEventFromCalendar(event);
+  }
+
   // Function to render event details on the calendar
   const tileContent = ({ date, view }) => {
     const dateKey = date.toDateString();
@@ -154,12 +166,13 @@ function App() {
     return view === 'month' && eventsForDate ? (
       <div>
         {eventsForDate.map((event, index) => (
-          <button key={index} className='event-on-calendar-button-css'>
-            <div className="event-css">
-              <strong>{event.titlu}</strong>
-              <div>{event.data.toLocaleTimeString()}, {event.place.oras}</div>
-            </div>
-          </button>
+          <div key={index} className='event-on-calendar-button-css' onClick={() => handleEventCalendarClick(event)}>
+          <div className="event-css">
+            <strong>{event.titlu}</strong>
+            <div>{event.data.toLocaleTimeString()}, {event.place.oras}</div>
+          </div>
+        </div>
+        
         ))}
       </div>
     ) : null;
@@ -171,27 +184,27 @@ function App() {
     setSearchPerformed(false); // Reset search state
   };
 
-  // CalendarIcon Component
-  const CalendarIcon = () => (
-    <button className='button-calendar-icon-css' onClick={handleCalendarClick}>
-      <FontAwesomeIcon icon={faCalendarAlt} className="calendar-icon-css" />
-    </button>
-  );
-
   return (
     <div className='purple-container-css'>
       <div className="gradient-background">
         <div className="calendar-and-upc-events-css">
-
-          <div className="upcoming-events-section">
-            <h2 className='upcoming-events-text-css'>Upcoming Events</h2>
-            <UpcomingEvents events={events} />
+          <div className="upcoming-events-or-events-from-calendar">
+            {showUpcomingEvents ? (
+              <div className="upcoming-events-section">
+                <h2 className='upcoming-events-text-css'>Upcoming Events</h2>
+                <UpcomingEvents events={events} />
+              </div>
+            ) : showEventFromCalendar ? (
+              <div className='event-from-calendar'>
+                <FilteredEvents events={[showEventFromCalendar]} />
+              </div>
+            ) : null}
           </div>
 
           <div className="calendar-section">
             <div className="search-icon-text-css">
               <div className="icon-calendar-text-css">
-                <CalendarIcon />
+                <CalendarIcon onClick={handleCalendarClick} />
                 <div className='calendar-text-css'>Calendar</div>
               </div>
               <div className='search-bar-css'>
@@ -211,11 +224,10 @@ function App() {
               {searchPerformed ? (
                 <FilteredEvents events={filteredEvents} />
               ) : showCalendar ? (
-                <div className='calendar-css'><Calendar tileContent={tileContent}/> </div>
+                <div className='calendar-css'><Calendar tileContent={tileContent} /></div>
               ) : null}
             </div>
           </div>
-
         </div>
       </div>
     </div>

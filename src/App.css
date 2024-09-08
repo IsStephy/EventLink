@@ -20,6 +20,7 @@
   font-weight: bold;
   position: relative;
   overflow: hidden;
+  padding: 0;
 }
 
 
@@ -199,6 +200,7 @@ body, .upcoming-events {
   font-size: 17px;
   font-weight: bold;
   color: rgba(19,19,65,255);
+  margin-right: 15px;
 }
 
 .search-icon-css {
@@ -292,23 +294,25 @@ body, .upcoming-events {
 .event-on-calendar-button-css {
   background-color: rgba(229, 249, 253, 1);
   color: rgba(39, 196, 255, 1);
-  font-size: 8px; /* Smaller font size */
-  line-height: 1.2; /* Adjust line height for better spacing */
-  margin-bottom: 2px; /* Space between events */
-  padding: 2px 4px; /* Add padding inside the button */
+  font-size: 8px;
+  line-height: 1.2;
+  margin: 2px 0;  /* Optional: add small margins for spacing */
+  padding: 4px 8px;
   border: none;
   border-radius: 3px;
-  white-space: nowrap; /* Prevent text from wrapping */
-  overflow: hidden; /* Hide overflow content */
-  text-overflow: ellipsis; /* Add ellipsis for overflowing text */
-  width: 100%; /* Make the button fill the width of the calendar tile */
-  box-sizing: border-box; /* Ensure padding is included in width calculation */
-  display: block; /* Ensure each button takes up its own line */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;  /* Make sure the button fills the full width */
+  box-sizing: border-box;
+  display: block;
+  text-align: left;  /* Align text to the left for better readability */
 }
 
 .event-on-calendar-button-css:hover {
   cursor: pointer;
-  background-color: rgba(214, 239, 253, 1); /* Slightly darker on hover */
+  opacity: 0.6;
+  width: 100%;
 }
 
 /* Styling for the individual months in year view */
