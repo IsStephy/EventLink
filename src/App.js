@@ -3,6 +3,7 @@ import Calendar from 'react-calendar';
 import './App.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
+import { faCircle } from '@fortawesome/free-solid-svg-icons';
 
 // Class representing a Place
 class Place {
@@ -26,12 +27,13 @@ class Organizer {
 
 // Class representing an Event
 class Event {
-  constructor(id, titlu, descriere, data, tip, organizer, place) {
+  constructor(id, titlu, descriere, data, tip, ora, organizer, place) {
     this.id = id;
     this.titlu = titlu;
     this.descriere = descriere;
     this.data = data;
     this.tip = tip;
+    this.ora = ora;
     this.organizer = organizer;
     this.place = place;
   }
@@ -96,6 +98,14 @@ const CalendarIcon = ({ onClick }) => (
   </button>
 );
 
+const PointIcon = () => {
+  return (
+    <div>
+      <FontAwesomeIcon icon={faCircle} className='point-icon-css'/>
+    </div>
+  );
+};
+
 // Main App Component
 function App() {
   const [inputValue, setInputValue] = useState('');
@@ -106,6 +116,7 @@ function App() {
       'A lecture on modern web development.',
       new Date(2024, 8, 4),
       'Obligatoriu',
+      '10:00 - 11:30',
       new Organizer(1, new Date(2024, 8, 1), 'Tech University', 'Education'),
       new Place(1, 'Central', 'City A', 'Main Street 123')
     ),
@@ -114,7 +125,8 @@ function App() {
       "Programmer's Day",
       'An event to celebrate programmers.',
       new Date(2024, 8, 14),
-      'Opționaln',
+      'Opțional',
+      "16:00 - 18:00",
       new Organizer(2, new Date(2024, 8, 20), 'Tech Corp', 'Technology'),
       new Place(2, 'West', 'City B', 'Tech Park 456')
     )
