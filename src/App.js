@@ -4,6 +4,10 @@ import './App.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { faCircle } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarDay } from '@fortawesome/free-solid-svg-icons';
+
 
 // Class representing a Place
 class Place {
@@ -29,13 +33,13 @@ class Organizer {
 class Event {
   constructor(id, titlu, descriere, data, tip, ora, organizer, place) {
     this.id = id;
-    this.titlu = titlu;
+    this.titlu = titlu; //
     this.descriere = descriere;
-    this.data = data;
-    this.tip = tip;
-    this.ora = ora;
+    this.data = data; //
+    this.tip = tip; //
+    this.ora = ora; //
     this.organizer = organizer;
-    this.place = place;
+    this.place = place; //
   }
 }
 
@@ -55,6 +59,67 @@ function UpcomingEvents({ events }) {
             Organizer: {upcomingEvent.organizer.nume}<br />
             Place: {upcomingEvent.place.oras}, {upcomingEvent.place.strada}
           </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function HalfUpcomingEvents({ events }) {
+  const lastEvents = events.slice(-2);
+  let arrayEventTypes = [];
+
+  lastEvents.forEach((event, index) => {
+    if (event.tip === 'Obligatoriu') {
+      arrayEventTypes[index] = true;
+    } else {
+      arrayEventTypes[index] = false;
+    }
+  });
+
+  return (
+    <div className='half-of-upcoming-events-css'>
+      {lastEvents.map((event, index) => (
+        <div key={index}>
+          {arrayEventTypes[index] ? (
+            <div className='mandatory-events-css'>
+            <div className='date-icon-date-css-1'>
+              <div> <DateIcon/> </div>
+              <div> <p>{event.data.toDateString()}</p> </div>
+            </div>
+
+            <div className='point-time-css-1'>
+                <div className='point-icon-1'> <PointIcon /> </div>
+                <div className='hour-css-1'> <p>{event.ora}</p> </div>
+              </div>
+
+            <div className='title-css-1'> <h4>{event.titlu}</h4> </div>
+
+            <div className='descriere-css-1'> <p> {event.descriere} </p> </div>
+
+              <ShowMoreIcon/>
+
+            </div>
+          ) : (
+            <div className='optional-events-css'>
+            <div className='date-icon-date-css-2'>
+              <div> <DateIcon/> </div>
+              <div> <p>{event.data.toDateString()}</p> </div>
+            </div>
+
+            <div className='point-time-css-2'>
+                <div className='point-icon-2'> <PointIcon /> </div>
+                <div className='hour-css-2'> <p>{event.ora}</p> </div>
+              </div>
+
+              <div className='title-css-2'> <h4>{event.titlu}</h4> </div>
+
+              <div className='descriere-css-2'> <p> {event.descriere} </p> </div>
+
+              <ShowMoreIcon/>
+
+            </div>
+          )}
         </div>
       ))}
     </div>
@@ -106,6 +171,30 @@ const PointIcon = () => {
   );
 };
 
+const LocationtIcon = () => {
+  return (
+    <div>
+      <FontAwesomeIcon icon={faMapMarkerAlt} className='location-icon-css'/>
+    </div>
+  );
+};
+
+const ShowMoreIcon = () => {
+  return (
+    <div>
+      <FontAwesomeIcon icon={faChevronDown} className='show-more-icon-css'/>
+    </div>
+  );
+};
+
+const DateIcon = () => {
+  return (
+    <div>
+      <FontAwesomeIcon icon={faCalendarDay} className='date-icon-css'/>
+    </div>
+  );
+};
+
 // Main App Component
 function App() {
   const [inputValue, setInputValue] = useState('');
@@ -138,6 +227,7 @@ function App() {
   const [showCalendar, setShowCalendar] = useState(true); 
   const [showUpcomingEvents, setUpcomingEvents] = useState(true);
   const [showEventFromCalendar, setEventFromCalendar] = useState(null);
+  const [showHalfUpcomingEvents, setHalfUpcomingEvents] = useState(true);
 
   useEffect(() => {
     const eventsByDate = events.reduce((accumulation, event) => {
@@ -179,11 +269,12 @@ function App() {
       <div>
         {eventsForDate.map((event, index) => (
           <div key={index} className='event-on-calendar-button-css' onClick={() => handleEventCalendarClick(event)}>
-          <div className="event-css">
-            <strong>{event.titlu}</strong>
-            <div>{event.data.toLocaleTimeString()}, {event.place.oras}</div>
+            <div className='event-css'>
+              <p>{event.titlu}</p>
+              <p>{event.ora}</p>
+            </div>
           </div>
-        </div>
+        
         
         ))}
       </div>
@@ -204,7 +295,7 @@ function App() {
             {showUpcomingEvents ? (
               <div className="upcoming-events-section">
                 <h2 className='upcoming-events-text-css'>Upcoming Events</h2>
-                <UpcomingEvents events={events} />
+                <HalfUpcomingEvents events={events} />
               </div>
             ) : showEventFromCalendar ? (
               <div className='event-from-calendar'>

@@ -9,7 +9,7 @@
   height: 90px;
   display: flex;
   align-items: flex-end; /* Aligns items to the bottom */
-  justify-content: flex-end; /* Aligns items to the right */
+  justify-content: center; /* Aligns items to the right */
   border: 1.2px solid rgba(237, 234, 254, 1); 
   font-size: 9px;
   padding-top: 7px;
@@ -105,11 +105,16 @@
 /* Styling for events inside the calendar tiles */
 .event-css {
   background-color: rgba(229, 249, 253, 1);
-  margin-top: 20px;
-  margin-bottom: 12px;
+  margin-top: 5px; /* Reduce margin for better fit */
   color: rgba(39, 196, 255, 1);
   font-size: 8px;
+  width: 100%; /* Take up full width of the tile */
+  height: 70%;
+  padding: 5px; /* Add some padding for better readability */
+  box-sizing: border-box;
+  border-radius: 4px; /* Optional: adds rounded corners */
 }
+
 
 .calendar-and-upc-events-css {
   display: flex;
@@ -258,6 +263,10 @@ body, .upcoming-events {
   margin-right: 20px; /* Adjust the right margin to create space */
 }
 
+.upcoming-events-text-css {
+  color: rgba(19,19,65,255);
+}
+
 .calendar-section {
   padding-right: 0px;
   padding-bottom: 22px;
@@ -400,5 +409,90 @@ body, .upcoming-events {
   font-family: 'Poppins', sans-serif;
   font-size: 13px;
 }
+
+.mandatory-events-css, .optional-events-css {
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: white; /* Individual white background for each event */
+  padding: 15px; /* Padding inside each event */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Shadow for subtle separation */
+  margin-top: 25px;
+  width: 250px;
+}
+
+.point-time-css-1, .point-time-css-2 {
+  display: flex;
+  align-items: center;
+  gap: -10px;
+}
+
+.icon-and-place-css-1, .icon-and-place-css-2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-icon-date-css-1, .date-icon-date-css-2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.point-icon-1 {
+  color: red;
+  font-size: 6.5px;
+}
+
+.point-icon-2 {
+  color: rgba(39, 196, 255, 1);
+  font-size: 6.5px;
+}
+
+.date-icon-date-css-1,
+.point-time-css-1,
+.date-icon-date-css-2,
+.point-time-css-2 {
+  margin: 0; /* Remove margins */
+  padding: 0; /* Remove padding */
+  color: rgba(159,156,180,255);
+  font-size: 13px;
+}
+
+.point-time-css-1, 
+.point-time-css-2 {
+  margin-top: -20px; /* Reduce space between date and time, adjust this as needed */
+}
+
+.mandatory-events-css, 
+.optional-events-css {
+  margin-bottom: 5px; /* Reduce the spacing between events */
+}
+
+.hour-css-1, 
+.hour-css-2 {
+  margin-left: 5px; /* Adjust as necessary */
+  padding-left: 5px; /* Adjust to reduce space between the icon and the text */
+}
+
+.title-css-1 h4, 
+.title-css-2 h4,
+.descriere-css-1,
+.descriere-css-2 {
+  margin: 0;
+  padding: 0;
+}
+
+.descriere-css-1,
+.descriere-css-2 {
+  margin-top: -8px;
+  font-size: 13px;
+  color: rgba(99,99,144,255);
+}
+
+
+
+
+
 
 
