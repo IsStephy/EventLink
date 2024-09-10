@@ -103,7 +103,8 @@ function HalfUpcomingEvents({ events, onShowMore }) {
 function FilteredEvents({ event, onBack }) {
   return (
     <div> 
-      {events.length > 0 ? ( 
+      {/* Use event prop instead of events */}
+      {event ? ( 
         <div className="filtered-events-container">
           <button onClick={onBack} className="back-button">
             <FontAwesomeIcon icon={faArrowLeft} /> Back
@@ -133,6 +134,10 @@ function FilteredEvents({ event, onBack }) {
             </div>
           </div>
         </div>
+      ) : (
+        <p>No events found.</p>
+      )}
+    </div>
   );
 }
 
