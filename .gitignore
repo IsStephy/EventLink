@@ -7,6 +7,10 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+__pycache__
+.dbeaver
+.project
+EventLink
 .Python
 build/
 develop-eggs/
