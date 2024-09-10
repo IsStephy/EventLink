@@ -2,6 +2,105 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
 
+/*new*/
+.filtered-events-container {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.back-button {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.back-button:hover {
+  background-color: #e0e0e0;
+}
+
+/* Dates not in month fade*/
+.faded-date {
+  opacity: 0.5;
+}
+
+
+
+.filtered-events-container {
+  background-color: white;
+  border-radius: 13px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 300px; /* Adjust as needed */
+  margin-top: 25px; /* Align with the initial event list */
+}
+
+.back-button {
+  background-color: rgba(239, 236, 251, 0.8);
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 15px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: rgba(131, 109, 244, 1);
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: rgba(214, 209, 245, 1);
+}
+
+.filtered-event-css {
+  font-family: 'Poppins', sans-serif;
+}
+
+.filtered-event-css h4 {
+  color: rgba(19, 19, 65, 1);
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.filtered-event-css p {
+  color: rgba(99, 99, 144, 1);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.event-detail {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.event-detail-icon {
+  margin-right: 10px;
+  color: rgba(131, 109, 244, 1);
+}
+
+.event-detail-text {
+  flex-grow: 1;
+}
+
+/* Update this existing class to ensure proper alignment */
+.upcoming-events-or-events-from-calendar {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 300px; /* Adjust as needed */
+}
+
+
+/*end new*/
+
+
+
 /* General styles for the calendar tiles */
 .react-calendar__tile {
   box-sizing: border-box; 
@@ -104,15 +203,24 @@
 
 /* Styling for events inside the calendar tiles */
 .event-css {
-  background-color: rgba(229, 249, 253, 1);
-  margin-top: 5px; /* Reduce margin for better fit */
-  color: rgba(39, 196, 255, 1);
+  margin-top: 5px;
   font-size: 8px;
-  width: 100%; /* Take up full width of the tile */
+  width: 100%;
   height: 70%;
-  padding: 5px; /* Add some padding for better readability */
+  padding: 5px;
   box-sizing: border-box;
-  border-radius: 4px; /* Optional: adds rounded corners */
+  border-radius: 4px;
+}
+
+/* for m/o events*/
+.event-css.mandatory-event {
+  background-color: rgba(255, 229, 229, 1); /* Light red background */
+  color: rgba(255, 39, 39, 1); /* Red text color */
+}
+
+.event-css.optional-event {
+  background-color: rgba(229, 249, 253, 1); /* Light blue background */
+  color: rgba(39, 196, 255, 1); /* Blue text color */
 }
 
 
@@ -300,27 +408,29 @@ body, .upcoming-events {
   color: #333; /* Set text color */
 }
 
+
+/*update here too !!!!!!!!!!*/
 .event-on-calendar-button-css {
-  background-color: rgba(229, 249, 253, 1);
-  color: rgba(39, 196, 255, 1);
+  background-color: transparent; /* Remove the background color */
+  color: inherit; /* Inherit color from child elements */
   font-size: 8px;
   line-height: 1.2;
-  margin: 2px 0;  /* Optional: add small margins for spacing */
+  margin: 2px 0;
   padding: 4px 8px;
   border: none;
   border-radius: 3px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 100%;  /* Make sure the button fills the full width */
+  width: 100%;
   box-sizing: border-box;
   display: block;
-  text-align: left;  /* Align text to the left for better readability */
+  text-align: left;
 }
 
 .event-on-calendar-button-css:hover {
   cursor: pointer;
-  opacity: 0.6;
+  opacity: 0.8;
   width: 100%;
 }
 
