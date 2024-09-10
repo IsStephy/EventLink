@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Events</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>All Events</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Location (Raion)</th>
+                <th>City</th>
+                <th>Street</th>
+                <th>Organizer</th>
+                <th>Domain</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in events %}
+            <tr>
+                <td>{{ event['titlu'] }}</td>
+                <td>{{ event['descriere'] }}</td>
+                <td>{{ event['data'] }}</td>
+                <td>{{ event['tip'] }}</td>
+                <td>{{ event['raion'] }}</td>
+                <td>{{ event['oras'] }}</td>
+                <td>{{ event['strada'] }}</td>
+                <td>{{ event['nume'] }}</td>
+                <td>{{ event['domeniu'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
