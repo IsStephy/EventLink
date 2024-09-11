@@ -37,6 +37,12 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   width: 300px; /* Adjust as needed */
   margin-top: 25px; /* Align with the initial event list */
+  margin-top: 147.5px;
+}
+
+.no-events-found-css {
+  margin-top: 160px;
+  margin-left: 65px;
 }
 
 .back-button {
@@ -572,6 +578,8 @@ body, .upcoming-events {
 .point-time-css-1, 
 .point-time-css-2 {
   margin-top: -20px; /* Reduce space between date and time, adjust this as needed */
+  display: flex;
+  gap: 8px;
 }
 
 .mandatory-events-css, 
@@ -598,6 +606,20 @@ body, .upcoming-events {
   margin-top: -8px;
   font-size: 13px;
   color: rgba(99,99,144,255);
+}
+
+.button-show-more, .button-show-less {
+  cursor: pointer;
+}
+
+.event-detail-icon-1 {
+  margin-right: 10px;
+  color: rgba(131, 109, 244, 1);
+  font-size: 12px;
+}
+
+.event-detail-text-1 {
+  font-size: 14px;
 }
 
 
