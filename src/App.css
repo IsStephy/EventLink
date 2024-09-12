@@ -1,6 +1,26 @@
 /* src/App.css */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
+.event-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 2px;
+}
+
+.first-event {
+  text-align: center;
+  padding: 2px;
+  margin-bottom: 2px;
+}
+
+.event-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+}
+
 .filtered-events-container {
   background-color: white;
   border-radius: 13px;

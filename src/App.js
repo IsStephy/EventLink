@@ -7,90 +7,7 @@ import { Event, Organizer, Place } from './EventModels';
 
 function App() {
   const [inputValue, setInputValue] = useState('');
-  const [events, setEvents] = useState([
-    new Event(
-      1,
-      'Lecture',
-      'A lecture on modern web development.',
-      new Date(2024, 8, 4),
-      'Obligatoriu',
-      '10:00 - 11:30',
-      new Organizer(1, new Date(2024, 8, 1), 'Tech University', 'Education'),
-      new Place(1, 'Central', 'City A', 'Main Street 123')
-    ),
-    new Event(
-      2,
-      "Programmer's Day",
-      'An event to celebrate programmers.',
-      new Date(2024, 8, 14),
-      'Opțional',
-      "16:00 - 18:00",
-      new Organizer(2, new Date(2024, 8, 20), 'Tech Corp', 'Technology'),
-      new Place(2, 'West', 'City B', 'Tech Park 456')
-    ),
-    new Event(
-      3,
-      'Conference',
-      'Annual tech conference.',
-      new Date(2024, 8, 14),
-      'Obligatoriu',
-      '09:00 - 17:00',
-      new Organizer(4, new Date(2024, 8, 15), 'Tech World', 'Technology'),
-      new Place(4, 'North', 'City D', 'Conference Center 101')
-    ),
-    new Event(
-      4,
-      'Workshop on AI',
-      'A hands-on workshop on artificial intelligence.',
-      new Date(2024, 8, 20),
-      'Opțional',
-      '13:00 - 16:00',
-      new Organizer(5, new Date(2024, 8, 10), 'AI Labs', 'Technology'),
-      new Place(5, 'East', 'City C', 'Innovation Hub 789')
-    ),
-    new Event(
-      5,
-      'Hackathon',
-      'A 24-hour coding competition.',
-      new Date(2024, 8, 14),
-      'Opțional',
-      '10:00 - 10:00 (next day)',
-      new Organizer(6, new Date(2024, 8, 5), 'Code Masters', 'Technology'),
-      new Place(6, 'South', 'City E', 'Tech Arena 321')
-    ),
-    new Event(
-      6,
-      'Career Fair',
-      'A fair to connect students with tech companies.',
-      new Date(2024, 8, 25),
-      'Obligatoriu',
-      '09:00 - 15:00',
-      new Organizer(7, new Date(2024, 8, 12), 'Job Connect', 'Recruitment'),
-      new Place(7, 'Central', 'City A', 'Career Center 202')
-    ),
-    new Event(
-      7,
-      'Cybersecurity Seminar',
-      'A seminar on the latest trends in cybersecurity.',
-      new Date(2024, 8, 14),
-      'Opțional',
-      '11:00 - 13:00',
-      new Organizer(8, new Date(2024, 8, 15), 'CyberShield', 'Security'),
-      new Place(8, 'North', 'City F', 'Security Center 333')
-    ),
-    new Event(
-      8,
-      'Startup Pitch',
-      'An event where startups pitch their ideas to investors.',
-      new Date(2024, 8, 14),
-      'Obligatoriu',
-      '14:00 - 17:00',
-      new Organizer(9, new Date(2024, 8, 18), 'Startup Inc', 'Business'),
-      new Place(9, 'West', 'City G', 'Innovation District 101')
-    )    
-    
-  ]);
-
+  const [events, setEvents] = useState([]);
   const [calendarEvents, setCalendarEvents] = useState({});
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
@@ -98,17 +15,82 @@ function App() {
   const [expandedEventId, setExpandedEventId] = useState(null);
 
   useEffect(() => {
-    const eventsByDate = events.reduce((accumulation, event) => {
-      const dateKey = event.data.toDateString();
-      if (!accumulation[dateKey]) {
-        accumulation[dateKey] = [];
+    const fetchAndOrganizeEvents = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:5000/events/interval?start_date=2024-09-01&end_date=2025-09-30');
+        const data = await response.json();
+        
+        console.log(data); 
+  
+        const transformedEvents = data.map(event => 
+          new Event(
+            event.id,
+            event.titlu,
+            event.descriere,
+            new Date(event.data),
+            event.tip.charAt(0).toUpperCase() + event.tip.slice(1), 
+            event.ora,
+            new Organizer(null, null, event.organizator.nume, event.organizator.domeniu),
+            new Place(null, event.loc.raion, event.loc.oras, event.loc.strada)
+          )
+        );
+  
+        const customEvents = [
+          new Event(
+            'custom1',
+            'Event 1',
+            'Description for Event 1',
+            new Date('2024-09-15T09:00:00'),  
+            'Obligatoriu',
+            '09:00',
+            new Organizer('org1', null, 'Organizer 1', 'Field 1'),
+            new Place('place1', 'District 1', 'City 1', 'Street 1')
+          ),
+          new Event(
+            'custom2',
+            'Event 2',
+            'Description for Event 2',
+            new Date('2024-09-15T11:00:00'),  
+            'Optional',
+            '11:00',
+            new Organizer('org2', null, 'Organizer 2', 'Field 2'),
+            new Place('place2', 'District 2', 'City 2', 'Street 2')
+          ),
+          new Event(
+            'custom3',
+            'Event 3',
+            'Description for Event 3',
+            new Date('2024-09-15T14:00:00'),  
+            'Obligatoriu',
+            '14:00',
+            new Organizer('org3', null, 'Organizer 3', 'Field 3'),
+            new Place('place3', 'District 3', 'City 3', 'Street 3')
+          )
+        ];
+  
+        // Combine API events with custom events
+        const allEvents = [...transformedEvents, ...customEvents];
+  
+        // Create calendarEvents structure
+        const newCalendarEvents = allEvents.reduce((acc, event) => {
+          const dateKey = event.data.toDateString();
+          if (!acc[dateKey]) {
+            acc[dateKey] = [];
+          }
+          acc[dateKey].push(event);
+          return acc;
+        }, {});
+  
+        setEvents(allEvents);
+        setCalendarEvents(newCalendarEvents);
+  
+      } catch (error) {
+        console.error("Error fetching events:", error);
       }
-      accumulation[dateKey].push(event);
-      return accumulation;
-    }, {});
-
-    setCalendarEvents(eventsByDate);
-  }, [events]);
+    };
+  
+    fetchAndOrganizeEvents();
+  }, []);
 
   const handleSearchClick = () => {
     const searchQuery = inputValue.toLowerCase();
@@ -264,7 +246,7 @@ function App() {
             </div>
             <hr className='line-css' />
             <div className='calendar-css'>
-              <Calendar                         //new
+              <Calendar
                 tileContent={tileContent}
                 minDetail="year"
                 maxDetail="month"
