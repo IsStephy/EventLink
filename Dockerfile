@@ -1,6 +1,7 @@
 FROM python
 WORKDIR /app
 
+COPY EventLink .
 COPY requirements.txt /app
 COPY *.py /app
 
