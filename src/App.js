@@ -1,27 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
-import { HalfUpcomingEvents, FilteredEvents } from './EventsDisplay';
+import { HalfUpcomingEvents, FilteredEvents, DisplayMoreEvents } from './EventsDisplay';
 import { SearchIcon, CalendarIcon } from './Icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import './App.css';
 import { Event, Organizer, Place } from './EventModels';
+import logo from './images/utm_logo.png';
 
 function App() {
   const [inputValue, setInputValue] = useState('');
   const [events, setEvents] = useState([]);
   const [calendarEvents, setCalendarEvents] = useState({});
   const [filteredEvents, setFilteredEvents] = useState([]);
+  const [clickedEvents, setClickedEvents] = useState([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [expandedEventId, setExpandedEventId] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchAndOrganizeEvents = async () => {
       try {
         const response = await fetch('http://127.0.0.1:5000/events/interval?start_date=2024-09-01&end_date=2025-09-30');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
-        
-        console.log(data); 
-  
+
         const transformedEvents = data.map(event => 
           new Event(
             event.id,
@@ -34,44 +40,62 @@ function App() {
             new Place(null, event.loc.raion, event.loc.oras, event.loc.strada)
           )
         );
-  
+
         const customEvents = [
           new Event(
-            'custom1',
-            'Event 1',
-            'Description for Event 1',
-            new Date('2024-09-15T09:00:00'),  
+            'utm1',
+            'Sesiune de Cercetare și Inovație',
+            'Eveniment dedicat prezentării rezultatelor cercetărilor recente și inovațiilor din diverse domenii tehnice.',
+            new Date('2024-09-25T10:00:00'),
             'Obligatoriu',
-            '09:00',
-            new Organizer('org1', null, 'Organizer 1', 'Field 1'),
-            new Place('place1', 'District 1', 'City 1', 'Street 1')
+            '10:00',
+            new Organizer('utm_org1', null, 'Universitatea Tehnică a Moldovei', 'Cercetare și Inovație'),
+            new Place('utm_place1', 'Centru', 'Chișinău', 'Strada Mihai Eminescu 45')
           ),
           new Event(
-            'custom2',
-            'Event 2',
-            'Description for Event 2',
-            new Date('2024-09-15T11:00:00'),  
+            'utm2',
+            'Workshop de Programare Avansată',
+            'Workshop intensiv pe subiecte avansate de programare, inclusiv tehnici de optimizare și noi framework-uri.',
+            new Date('2024-09-25T12:00:00'),
             'Optional',
-            '11:00',
-            new Organizer('org2', null, 'Organizer 2', 'Field 2'),
-            new Place('place2', 'District 2', 'City 2', 'Street 2')
+            '12:00',
+            new Organizer('utm_org2', null, 'Universitatea Tehnică a Moldovei', 'IT și Programare'),
+            new Place('utm_place2', 'Buiucani', 'Chișinău', 'Strada Alba Iulia 75')
           ),
           new Event(
-            'custom3',
-            'Event 3',
-            'Description for Event 3',
-            new Date('2024-09-15T14:00:00'),  
+            'utm3',
+            'Expoziție de Proiecte de Diplomă',
+            'Expoziție anuală în care studenții își prezintă proiectele de diplomă și cercetările în domeniul tehnologiei și ingineriei.',
+            new Date('2024-09-25T14:00:00'),
             'Obligatoriu',
             '14:00',
-            new Organizer('org3', null, 'Organizer 3', 'Field 3'),
-            new Place('place3', 'District 3', 'City 3', 'Street 3')
+            new Organizer('utm_org3', null, 'Universitatea Tehnică a Moldovei', 'Facultatea de Inginerie'),
+            new Place('utm_place3', 'Centru', 'Chișinău', 'Strada Dacia 32')
+          ),
+          new Event(
+            'utm4',
+            'Conferința Națională de Tehnologii Emergentă',
+            'Conferință dedicată noilor tehnologii emergente și impactul lor asupra industriei și educației.',
+            new Date('2024-09-25T16:00:00'),
+            'Optional',
+            '16:00',
+            new Organizer('utm_org4', null, 'Universitatea Tehnică a Moldovei', 'Tehnologie și Inovație'),
+            new Place('utm_place4', 'Telecentru', 'Chișinău', 'Strada Miorița 16')
+          ),
+          new Event(
+            'utm5',
+            'Seminar de Cybersecurity',
+            'Seminar dedicat celor mai recente dezvoltări în securitatea cibernetică și măsurilor de protecție a datelor.',
+            new Date('2024-09-25T18:00:00'),
+            'Obligatoriu',
+            '18:00',
+            new Organizer('utm_org5', null, 'Universitatea Tehnică a Moldovei', 'Securitate Cibernetică'),
+            new Place('utm_place5', 'Râșcani', 'Chișinău', 'Strada Tighina 25')
           )
-        ];
-  
-        // Combine API events with custom events
+        ];        
+
         const allEvents = [...transformedEvents, ...customEvents];
-  
-        // Create calendarEvents structure
+
         const newCalendarEvents = allEvents.reduce((acc, event) => {
           const dateKey = event.data.toDateString();
           if (!acc[dateKey]) {
@@ -80,15 +104,17 @@ function App() {
           acc[dateKey].push(event);
           return acc;
         }, {});
-  
+
         setEvents(allEvents);
         setCalendarEvents(newCalendarEvents);
-  
+        setError(null);
+
       } catch (error) {
         console.error("Error fetching events:", error);
+        setError("Failed to load events. Please try again later.");
       }
     };
-  
+
     fetchAndOrganizeEvents();
   }, []);
 
@@ -102,12 +128,22 @@ function App() {
     setFilteredEvents(filtered);
     setSearchPerformed(true);
     setSelectedEvent(null);
+    setClickedEvents([]);
     setInputValue('');
   };
 
   const handleEventCalendarClick = (event) => {
     setSelectedEvent(event);
     setSearchPerformed(false);
+    setClickedEvents([]);
+  };
+
+  const handleShowAllEvents = (events) => {
+    setClickedEvents(events);
+    setSelectedEvent(null);
+    setSearchPerformed(false);
+    setFilteredEvents([]);
+    setExpandedEventId(null);
   };
 
   const tileContent = ({ date, view }) => {
@@ -126,41 +162,48 @@ function App() {
 
       return (
         <div className={`event-container ${!isCurrentMonth ? 'faded-date' : ''}`}>
-          <div 
-            className={`first-event ${firstEvent.tip === 'Obligatoriu' ? 'mandatory-event' : 'optional-event'}`}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleEventCalendarClick(firstEvent);
-            }}
-          >
-            <p className="event-title">{firstEvent.titlu}</p>
-            <p className="event-time">{firstEvent.ora}</p>
-          </div>
-          <div className="event-indicator">
-            {mandatoryEvents.length > 0 && (
+          <div className="event-details-container">
+            {firstEvent && (
               <div 
-                className="event-dot mandatory-dot"
+                className={`event-details ${firstEvent.tip === 'Obligatoriu' ? 'mandatory-event' : 'optional-event'}`}
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleEventCalendarClick(mandatoryEvents[0]);
+                  handleEventCalendarClick(firstEvent);
                 }}
-                title={`${mandatoryEvents.length} more mandatory event(s)`}
               >
-                {mandatoryEvents.length}
+                <div className='event-div-calendar-tile-css'>
+                  <p className="event-title">{firstEvent.titlu}</p>
+                  <p className='helpful-p-css'></p>
+                  <p className="event-time">{firstEvent.ora}</p>
+                </div>
               </div>
             )}
-            {optionalEvents.length > 0 && (
-              <div 
-                className="event-dot optional-dot"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleEventCalendarClick(optionalEvents[0]);
-                }}
-                title={`${optionalEvents.length} more optional event(s)`}
-              >
-                {optionalEvents.length}
-              </div>
-            )}
+            <div className="event-indicator">
+              {mandatoryEvents.length > 0 && (
+                <div 
+                  className="event-dot mandatory-dot"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleShowAllEvents(mandatoryEvents);
+                  }}
+                  title={`${mandatoryEvents.length} more mandatory event(s)`}
+                >
+                  {mandatoryEvents.length}
+                </div>
+              )}
+              {optionalEvents.length > 0 && (
+                <div 
+                  className="event-dot optional-dot"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleShowAllEvents(optionalEvents);
+                  }}
+                  title={`${optionalEvents.length} more optional event(s)`}
+                >
+                  {optionalEvents.length}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       );
@@ -168,21 +211,34 @@ function App() {
     return null;
   };
 
-  const handleShowAllEvents = (dateKey) => {
-    const eventsForDate = calendarEvents[dateKey] || [];
-    setFilteredEvents(eventsForDate);
-    setSearchPerformed(true);
-    setSelectedEvent(null);
-  };
-
-  const handleCalendarClick = () => {
-    setSearchPerformed(false);
-    setSelectedEvent(null);
+  const renderClickedEvents = () => {
+    if (clickedEvents.length > 0) {
+      return (
+        <>
+          <div className='more-events-container-css'>
+            {clickedEvents.map((event, index) => (
+              <DisplayMoreEvents 
+                key={index}
+                event={event}
+              />
+            ))}
+          </div>
+          <div className="back-button-container">
+            <button onClick={handleBackClick} className="back-button">
+              <FontAwesomeIcon icon={faArrowLeft} /> Back
+            </button>
+          </div>
+        </>
+      );
+    }
+    return null;
   };
 
   const handleBackClick = () => {
     setSearchPerformed(false);
     setSelectedEvent(null);
+    setClickedEvents([]);
+    setFilteredEvents([]);
   };
 
   const handleShowMore = (eventId) => {
@@ -198,38 +254,69 @@ function App() {
       <div className="gradient-background">
         <div className="calendar-and-upc-events-css">
           <div className="upcoming-events-or-events-from-calendar">
-            {!searchPerformed && !selectedEvent && (
-              <div className="upcoming-events-section">
-                <h2 className='upcoming-events-text-css'>Upcoming Events</h2>
-                <HalfUpcomingEvents events={events} expandedEventId={expandedEventId} onShowMore={handleShowMore} onHideMore={handleHideMore} />
-              </div>
-            )}
-
-            {searchPerformed && filteredEvents.length > 0 && (
-              filteredEvents.map((event, index) => (
-                <FilteredEvents 
-                  key={index}
-                  event={event} 
-                  onBack={handleBackClick}
-                />
-              ))
-            )}
-            {filteredEvents.length === 0 && searchPerformed && (
-              <p className='no-events-found-css'> No events found.</p>
-            )}
-
-            {selectedEvent && (
-              <FilteredEvents 
-                event={selectedEvent}
-                onBack={handleBackClick}
-              />
+            {error && <p className="error-message">{error}</p>}
+            {clickedEvents.length > 0 ? (
+              renderClickedEvents()
+            ) : (
+              <>
+                {!searchPerformed && !selectedEvent && (
+                  <div className="upcoming-events-section">
+                    <h2 className='upcoming-events-text-css'>Upcoming Events</h2>
+                    <HalfUpcomingEvents events={events} expandedEventId={expandedEventId} onShowMore={handleShowMore} onHideMore={handleHideMore} />
+                  </div>
+                )}
+                {searchPerformed && filteredEvents.length === 1 && (
+                  <>
+                    <h2 className='search-results-text-css'>Search results</h2>
+                    <FilteredEvents 
+                      key={filteredEvents[0].id}
+                      event={filteredEvents[0]} 
+                      onBack={handleBackClick}
+                    />
+                  </>
+                )}
+                {searchPerformed && filteredEvents.length > 1 && (
+                  <>
+                    <h2 className='search-results-text-css'>Search results</h2>
+                    <div className='more-events-container-css'>
+                      {filteredEvents.map((event, index) => (
+                        <DisplayMoreEvents 
+                          key={index}
+                          event={event}
+                        />
+                      ))}
+                    </div>
+                    <div className="back-button-container">
+                      <button onClick={handleBackClick} className="back-button">
+                        <FontAwesomeIcon icon={faArrowLeft} /> Back
+                      </button>
+                    </div>
+                  </>
+                )}
+                {searchPerformed && filteredEvents.length === 0 && (
+                  <p className='no-events-found-css'>No events found.</p>
+                )}
+                {selectedEvent && (
+                  <FilteredEvents 
+                    event={selectedEvent}
+                    onBack={handleBackClick}
+                  />
+                )}
+              </>
             )}
           </div>
-
           <div className="calendar-section">
             <div className="search-icon-text-css">
               <div className="icon-calendar-text-css">
-                <CalendarIcon onClick={handleCalendarClick} />
+                <CalendarIcon 
+                  onClick={() => {
+                    setSelectedEvent(null);
+                    setSearchPerformed(false);
+                    setClickedEvents([]);
+                    setFilteredEvents([]);
+                    setExpandedEventId(null);
+                  }} 
+                />
                 <div className='calendar-text-css'>Calendar</div>
               </div>
               <div className='search-bar-css'>
@@ -250,11 +337,9 @@ function App() {
                 tileContent={tileContent}
                 minDetail="year"
                 maxDetail="month"
-                navigationLabel={({ date, view }) => 
-                  `${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`
-                }
-                showNeighboringMonth={false}
-              />
+                navigationLabel={({ date }) => `${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`}
+                onClickDay={() => setSelectedEvent(null)}
+              />                     
             </div>
           </div>
         </div>

@@ -4,9 +4,44 @@
 .event-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  padding: 2px;
+  gap: 0px;
+  padding: 0px;
+}
+
+.helpful-p-css {
+  font-size: 2px;
+}
+
+.event-date {
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+}
+
+.event-details-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0px; /* Gap between the date and event details */
+}
+
+.event-details {
+  cursor: pointer;
+  padding: 2px; /* Adjust padding as needed */
+  display: flex;
+  flex-direction: column; /* Layout in a column */
+  align-items: center; /* Center items horizontally */
+  justify-content: center; /* Center items vertically */
+  text-align: center; /* Center text */
+  width: 100%; /* Full width of the parent container */
+  height: 100%; /* Full height of the parent container */
+  box-sizing: border-box; /* Include padding in the width/height calculation */
+  margin-bottom: 7px;
+}
+
+.event-div-calendar-tile-css {
+  flex-direction: column; /* Layout in a column */
+  align-items: center; /* Center items horizontally */
+  justify-content: center; /* Center items vertically */
 }
 
 .first-event {
@@ -19,15 +54,22 @@
   display: flex;
   justify-content: center;
   gap: 2px;
+  margin-top: 8px;
 }
 
 .filtered-events-container {
   background-color: white;
   border-radius: 13px;
-  padding: 20px;
+  padding: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  width: 300px; /* Adjust as needed */
+  width: 250px; /* Adjust as needed */
   margin-top: 147.5px; /* Align with the initial event list */
+  font-size: 13px;
+  margin-right: -20px;
+}
+
+.filtered-events-container-div {
+  margin-right: 20px;
 }
 
 .back-button {
@@ -41,6 +83,7 @@
   font-size: 14px;
   color: rgba(131, 109, 244, 1);
   transition: background-color 0.3s ease;
+  margin-top: 15px;
 }
 
 .back-button:hover {
@@ -63,16 +106,12 @@
 
 /* Event container positioning */
 .event-container {
-  position: absolute;
-  bottom: 2px;
-  left: 2px;
-  right: 2px;
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: flex-end;
-  padding-top: 20px; /* Adjust based on the size of your date number */
   height: 100%;
+  padding-bottom: 5px; /* Ensure there's space between event and dots */
 }
 
 /* Event indicator styling */
@@ -139,15 +178,17 @@
 .event-title {
   margin: 0;
   font-weight: bold;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal; /* Allow the text to wrap */
+  word-wrap: break-word; /* Ensure long words break to the next line */
+  overflow: visible; /* Make sure the full text is displayed */
+  font-size: 9px;
 }
 
 .event-time {
   margin: 0;
-  font-size: 0.7em;
+  font-size: 1em; /* Increased font size */
 }
+
 
 .filtered-event-css {
   font-family: 'Poppins', sans-serif;
@@ -176,6 +217,12 @@
   color: rgba(131, 109, 244, 1);
 }
 
+.event-detail-icon-more {
+  margin-right: 7px;
+  color: rgba(131, 109, 244, 1);
+  font-size: 12.5px;
+}
+
 .event-detail-text {
   flex-grow: 1;
 }
@@ -191,28 +238,30 @@
 /* Calendar tile styling */
 .react-calendar__tile {
   position: relative;
-  height: 90px; /* Increased height to accommodate events and indicators */
+  height: 120px; /* Increased height to accommodate events and indicators */
   padding: 5px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   box-sizing: border-box;
+  
 }
 
 .react-calendar__tile abbr {
   position: absolute;
-  top: 5px;
+  top: 5px; /* Position the date at the top */
   left: 5px;
-  font-size: 0.9em;
+  font-size: 1.2em;
 }
+
 
 /* Event box styling */
 .event-on-calendar-button-css {
+  margin-top: 5px; /* Ensure there is a 5px space between the date and the first event */
   background-color: rgba(255, 229, 229, 0.7); /* Light red background for mandatory events */
   color: rgba(255, 39, 39, 1);
   font-size: 8px;
   line-height: 1.2;
-  margin: 2px 0;
   padding: 2px 4px;
   border: none;
   border-radius: 3px;
@@ -220,20 +269,18 @@
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
-  height: 20px; /* Fixed height for event boxes */
+  height: 18px;
   box-sizing: border-box;
   display: block;
   text-align: left;
+  padding: 5px;
+  cursor: pointer;
 }
 
 .event-on-calendar-button-css.optional-event {
   background-color: rgba(229, 249, 253, 0.7); /* Light blue background for optional events */
   color: rgba(39, 196, 255, 1);
 }
-
-
-
-
 
 
 /* General styles for the calendar tiles */
@@ -362,9 +409,13 @@
 .calendar-and-upc-events-css {
   display: flex;
   justify-content: space-between;
-  padding-right: 50px; /* Matches padding of gradient-background for consistency */
+  margin-right: 25px; /* Matches padding of gradient-background for consistency */
   box-sizing: border-box;
   gap: 50px; /* Add a gap between the upcoming events and calendar */
+  margin-top: -15px;
+  margin-bottom: 30px;
+  margin-left: 20px;
+  
 }
 
 /* Hide double arrows in navigation */
@@ -503,7 +554,7 @@ body, .upcoming-events {
 .upcoming-events-section {
   padding-top: 120px;
   padding-left: 30px;
-  margin-right: 20px; /* Adjust the right margin to create space */
+  margin-left: -35px; /* Adjust the right margin to create space */
 }
 
 .upcoming-events-text-css {
@@ -702,7 +753,7 @@ body, .upcoming-events {
   margin: 0; /* Remove margins */
   padding: 0; /* Remove padding */
   color: rgba(159,156,180,255);
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .point-time-css-1, 
@@ -736,6 +787,17 @@ body, .upcoming-events {
   margin-top: -8px;
   font-size: 13px;
   color: rgba(99,99,144,255);
+  margin-bottom: 8px;
+}
+
+.descriere-css-more {
+  margin: 0;
+  padding: 0;
+  margin-top: -8px;
+  color: rgba(99,99,144,255);
+  margin-bottom: 8px;
+  font-size: 11.5px;
+
 }
 
 .button-show-more, .button-show-less {
@@ -752,9 +814,102 @@ body, .upcoming-events {
   font-size: 14px;
 }
 
+.event-detail-text-more { 
+  font-size: 12px;
+}
+
+/* NEW */
+
+.data-ora-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 0px;
+  padding-right: 0px;
+}
+
+.data-div {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.clock-div {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.organizer-css {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.place-css {
+  display: flex;
+  gap: 8px;
+}
+
+.display-more-events-css {
+  display: flex; 
+  gap: 20px;
+  align-items: center;
+  margin-top: 20px;
+  position: relative;
+  background-color: white;
+  padding: 20px;
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  
+}
+
+.vertical-bar-blue, .vertical-bar-red {
+  height: auto; /* Ensure the line spans the full height of its container */
+  width: 4px; /* Set a fixed width for the vertical bar */
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.vertical-bar-blue, .vertical-bar-red {
+  grid-column: 2 / 3; /* Vertical bar in the second column */
+  width: 4px; /* Define vertical bar width */
+  align-self: stretch; /* Stretch to match the height of the container */
+  position: relative; /* Ensure it's positioned within the layout */
+}
 
 
+.vertical-bar-blue {
+  background-color: rgba(39, 196, 255, 1);
+}
+
+.vertical-bar-red {
+  background-color: red;
+}
 
 
+.titlu-org-loc-css {
+  display: flex;
+  flex-direction: column;
+  gap: -10px;
+}
 
+.data-css, .ora-css {
+  color: rgba(159,156,180,255);
+  font-size: 12px;
+}
+
+.more-events-container-css {
+  margin-top: 127px;
+}
+
+.search-results-text-css {
+  margin-left: 15px;
+  margin-bottom: -110px;
+  margin-top: 100px;
+
+}
 

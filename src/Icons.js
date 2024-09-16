@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faMapMarkerAlt, faChevronDown, faChevronUp, faCalendarDay, faClock, faTag, faSearch, faCalendar, faCircle } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faMapMarkerAlt, faChevronDown, faChevronUp, faCalendarDay, faClock, faTag, faSearch, faCalendar, faCircle,  faGripLinesVertical} from '@fortawesome/free-solid-svg-icons';
 
 export const SearchIcon = () => (
   <div>
@@ -37,3 +37,27 @@ export const ShowLessButton = () => {
     <FontAwesomeIcon icon={faChevronUp} className='show-less-icon-css' />
   );
 };
+
+export const VerticalBar = () => {
+  return (
+    <FontAwesomeIcon icon={faGripLinesVertical}/>
+  )
+}
+
+export const ClockIcon = () => {
+  return (
+    <FontAwesomeIcon icon={faClock} />
+  )
+}
+
+export const PlaceIcon = () => {
+  return (
+    <FontAwesomeIcon icon={faMapMarkerAlt}/>
+  )
+}
+
+export const OrganizerIcon = () => {
+  return (
+    <FontAwesomeIcon icon={faUser}/>
+  )
+}
