@@ -5,8 +5,8 @@ def validate_event_data(data):
     errors = []
     
     titlu = data.get('titlu', '')
-    if len(titlu) < 4 or len(titlu) > 20:
-        errors.append("Titlu trebuie să conțină între 4-20 caractere.")
+    if len(titlu) < 4 or len(titlu) > 100:
+        errors.append("Titlu trebuie să conțină între 4-100 caractere.")
 
     descriere = data.get('descriere', '')
     if not descriere.strip():
