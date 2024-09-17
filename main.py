@@ -1,13 +1,16 @@
+import flask
 from flask import Flask, render_template, request, redirect, url_for, jsonify, abort
 from validate import validate_event_data
 from datetime import datetime, timedelta
 import sqlite3
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
 current_directory = os.path.dirname(os.path.abspath(__file__))
 database_path = os.path.join(current_directory, 'EventLink')
-
+# CORS(app, resources={r'/*': {'origins': config['ORIGINS']}}, supports_credentials=True)
+CORS(app, resources={r"*": {"origins": "*"}}, support_credentials=True)
 
 def get_db_connection():
     conn = sqlite3.connect(database_path, check_same_thread=False)
@@ -20,24 +23,27 @@ def admin():
 
 #add new event to the database
 #example http://127.0.0.1:5000/add?titlu=Event1&descriere=Description1&data=2024-09-15&ora=14:00:00&tip=conference&raion=Raion1&oras=Oras1&strada=Strada1&nume=OrganizerName&domeniu=IT
-@app.route('/add', methods=['POST'])
+@app.route('/events/add', methods=['POST', 'OPTIONS'])
 def add_event():
-    Titlu = request.args.get('titlu')
-    Descriere = request.args.get('descriere')
-    Data = request.args.get('data')
-    Ora = request.args.get('ora')
-    Tip = request.args.get('tip')
-    
-    Raion = request.args.get('raion')
-    Oras = request.args.get('oras')
-    Strada = request.args.get('strada')
-    
-    Nume = request.args.get('nume')
-    Domeniu = request.args.get('domeniu')
+    data = request.get_json()  # Get JSON data from the request body
 
-    is_valid, message = validate_event_data(request.args)
+    Titlu = data.get('titlu')
+    Descriere = data.get('descriere')
+    Data = data.get('data')
+    Ora = data.get('ora')
+    Tip = data.get('tip')
     
-    if not is_valid:
+    Raion = data.get('raion')
+    Oras = data.get('oras')
+    Strada = data.get('strada')
+    
+    Nume = data.get('nume')
+    Domeniu = data.get('domeniu')
+
+    is_valid, message = validate_event_data(data)
+    #is_valid = True
+    if not is_valid:    
+        print("hellow")
         return jsonify({'status': 'error', 'errors': message}), 400
 
     try:
@@ -62,8 +68,8 @@ def add_event():
         
         try:
             cur.execute(
-                "INSERT INTO eveniment (titlu, descriere, data, data_start, data_end, tip, organizator_id, loc_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                (Titlu, Descriere, Data, Ora, Ora, Tip, organizator_id, loc_id)
+                "INSERT INTO eveniment (titlu, descriere, data, ora, tip, organizator_id, loc_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (Titlu, Descriere, Data, Ora, Tip, organizator_id, loc_id)
             )
         except sqlite3.Error as e:
             conn.rollback()
@@ -76,7 +82,7 @@ def add_event():
 
     finally:
         conn.close()
-
+    # r.headers["Access-Control-Allow-Origin"] = '*'
     return jsonify({
         'status': 'success',
         'message': 'Event added successfully',
@@ -393,4 +399,4 @@ def delete_event(id):
     return jsonify({'status': 'success', 'message': 'Event deleted successfully'}), 200
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=3001, debug=True)
