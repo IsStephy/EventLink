@@ -48,7 +48,7 @@ function App() {
             'Eveniment dedicat prezentării rezultatelor cercetărilor recente și inovațiilor din diverse domenii tehnice.',
             new Date('2024-09-25T10:00:00'),
             'Obligatoriu',
-            '10:00',
+            '10:00 - 13:00',
             new Organizer('utm_org1', null, 'Universitatea Tehnică a Moldovei', 'Cercetare și Inovație'),
             new Place('utm_place1', 'Centru', 'Chișinău', 'Strada Mihai Eminescu 45')
           ),
@@ -58,7 +58,7 @@ function App() {
             'Workshop intensiv pe subiecte avansate de programare, inclusiv tehnici de optimizare și noi framework-uri.',
             new Date('2024-09-25T12:00:00'),
             'Optional',
-            '12:00',
+            '12:00 - 13:00',
             new Organizer('utm_org2', null, 'Universitatea Tehnică a Moldovei', 'IT și Programare'),
             new Place('utm_place2', 'Buiucani', 'Chișinău', 'Strada Alba Iulia 75')
           ),
@@ -68,7 +68,7 @@ function App() {
             'Expoziție anuală în care studenții își prezintă proiectele de diplomă și cercetările în domeniul tehnologiei și ingineriei.',
             new Date('2024-09-25T14:00:00'),
             'Obligatoriu',
-            '14:00',
+            '14:00 - 17:00',
             new Organizer('utm_org3', null, 'Universitatea Tehnică a Moldovei', 'Facultatea de Inginerie'),
             new Place('utm_place3', 'Centru', 'Chișinău', 'Strada Dacia 32')
           ),
@@ -78,7 +78,7 @@ function App() {
             'Conferință dedicată noilor tehnologii emergente și impactul lor asupra industriei și educației.',
             new Date('2024-09-25T16:00:00'),
             'Optional',
-            '16:00',
+            '16:00 - 17:30',
             new Organizer('utm_org4', null, 'Universitatea Tehnică a Moldovei', 'Tehnologie și Inovație'),
             new Place('utm_place4', 'Telecentru', 'Chișinău', 'Strada Miorița 16')
           ),
@@ -88,7 +88,7 @@ function App() {
             'Seminar dedicat celor mai recente dezvoltări în securitatea cibernetică și măsurilor de protecție a datelor.',
             new Date('2024-09-25T18:00:00'),
             'Obligatoriu',
-            '18:00',
+            '18:00 - 19:00',
             new Organizer('utm_org5', null, 'Universitatea Tehnică a Moldovei', 'Securitate Cibernetică'),
             new Place('utm_place5', 'Râșcani', 'Chișinău', 'Strada Tighina 25')
           )
