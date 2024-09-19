@@ -1,5 +1,5 @@
 import flask
-from flask import Flask, render_template, request, redirect, url_for, jsonify, abort
+from flask import Flask, request, jsonify, abort
 from validate import validate_event_data
 from datetime import datetime, timedelta
 import sqlite3
@@ -100,10 +100,6 @@ def add_event():
         }
     }), 200
 
-
-    #..../events?startDate="01.09.2024"&endDate="05.10.2024"&whoami="CleverStudent"
-    
-    # by id
 
 #sent to frontend data about the event by id
 #example http://127.0.0.1:5000/events/2
@@ -314,22 +310,23 @@ def display_events_in_interval():
 #http://127.0.0.1:5000/events/patch/3?titlu=Updated%20Title&descriere=Updated%20Description&data=2024-09-15&ora=14:00&raion=Updated%20Raion&oras=Updated%20Oras&strada=Updated%20Strada&nume=Updated%20Organizator&domeniu=Updated%20Domain
 @app.route('/events/patch/<int:id>', methods=['PATCH'])
 def update_event(id):
+    data = request.json
     try:
         conn = get_db_connection()
         with conn:
             cur = conn.cursor()
 
             # Extract data from query parameters
-            Titlu = request.args.get('titlu')
-            Descriere = request.args.get('descriere')
-            Data = request.args.get('data')
-            Ora = request.args.get('ora')
-            Raion = request.args.get('raion')
-            Oras = request.args.get('oras')
-            Strada = request.args.get('strada')
-            Nume = request.args.get('nume')
-            Domeniu = request.args.get('domeniu')
-            
+            Titlu = data.get('titlu')
+            Descriere = data.get('descriere')
+            Data = data.get('data')
+            Ora = data.get('ora')
+            Raion = data.get('raion')
+            Oras = data.get('oras')
+            Strada = data.get('strada')
+            Nume = data.get('nume')
+            Domeniu = data.get('domeniu')
+
             # does not need validation because if any parameters are empty the function COALECE does not modify the value
             # Check if location needs updating
             if Raion or Oras or Strada:
