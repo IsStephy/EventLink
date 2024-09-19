@@ -268,22 +268,23 @@ def display_events_in_interval():
 #http://127.0.0.1:5000/events/patch/3?titlu=Updated%20Title&descriere=Updated%20Description&data=2024-09-15&ora=14:00&raion=Updated%20Raion&oras=Updated%20Oras&strada=Updated%20Strada&nume=Updated%20Organizator&domeniu=Updated%20Domain
 @app.route('/events/patch/<int:id>', methods=['PATCH'])
 def update_event(id):
+    payload = request.json
     try:
         conn = get_db_connection()
         with conn:
             cur = conn.cursor()
 
             # Extract data from query parameters
-            Titlu = request.args.get('titlu')
-            Descriere = request.args.get('descriere')
-            Data = request.args.get('data')
-            Ora = request.args.get('ora')
-            Raion = request.args.get('raion')
-            Oras = request.args.get('oras')
-            Strada = request.args.get('strada')
-            Nume = request.args.get('nume')
-            Domeniu = request.args.get('domeniu')
-            
+            Titlu = payload.get('titlu')
+            Descriere = payload.get('descriere')
+            Data = payload.get('data')
+            Ora = payload.get('ora')
+            Raion = payload.get('raion')
+            Oras = payload.get('oras')
+            Strada = payload.get('strada')
+            Nume = payload.get('nume')
+            Domeniu = payload.get('domeniu')
+
             # does not need validation because if any parameters are empty the function COALECE does not modify the value
             # Check if location needs updating
             if Raion or Oras or Strada:
