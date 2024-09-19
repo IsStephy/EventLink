@@ -145,10 +145,10 @@ def display_event_by_id(id):
     except sqlite3.Error as e:
         return jsonify({'status': 'error', 'message': 'Failed to fetch event', 'error': str(e)}), 500
 
-#send to the frontend data about 2 next event
-#example http://127.0.0.1:5000/events/next_two
-@app.route('/events/next_two', methods=['GET'])
-def display_next_two_events():
+#send to the frontend data about next events
+# Example: http://127.0.0.1:5000/events/next_events?limit=3
+@app.route('/events/next_events', methods=['GET'])
+def display_next_events():
     try:
         conn = get_db_connection()
         with conn:
@@ -156,6 +156,8 @@ def display_next_two_events():
             
             # Get today's date
             today = datetime.now().strftime('%Y-%m-%d')
+            # Extract the limit from query parameters or set it to be by default 2
+            limit = request.args.get('limit', default=2, type=int)
             
             cur.execute('''
                 SELECT eveniment.id, eveniment.titlu, eveniment.descriere, eveniment.data, eveniment.ora, eveniment.tip, 
@@ -166,8 +168,8 @@ def display_next_two_events():
                 JOIN organizator ON eveniment.organizator_id = organizator.id
                 WHERE eveniment.data >= ?
                 ORDER BY eveniment.data, eveniment.ora
-                LIMIT 2
-            ''', (today,))
+                LIMIT ?
+            ''', (today, limit))
             
             events = cur.fetchall()
             #does not need validation because information was extracted from database
