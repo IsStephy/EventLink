@@ -197,55 +197,6 @@ def display_next_events():
     
     return jsonify(events_list)
 
-#send to teh frontend data about events this month 
-#example http://127.0.0.1:5000/events/current_month
-@app.route('/events/current_month', methods=['GET'])
-def display_events_current_month():
-    try:
-        conn = get_db_connection()
-        with conn:
-            cur = conn.cursor()
-            
-            today = datetime.now()
-            first_day = today.replace(day=1)
-            last_day = (today.replace(day=28) + timedelta(days=4)).replace(day=1) - timedelta(days=1)
-            
-            cur.execute('''
-                SELECT eveniment.id, eveniment.titlu, eveniment.descriere, eveniment.data, eveniment.ora, eveniment.tip, 
-                       loc.raion, loc.oras, loc.strada,
-                       organizator.nume, organizator.domeniu
-                FROM eveniment
-                JOIN loc ON eveniment.loc_id = loc.id
-                JOIN organizator ON eveniment.organizator_id = organizator.id
-                WHERE eveniment.data BETWEEN ? AND ?
-            ''', (first_day.strftime('%Y-%m-%d'), last_day.strftime('%Y-%m-%d')))
-            
-            events = cur.fetchall()
-            #does not need validation because information was extracted from database
-            
-            events_list = [{
-                'id': event[0],
-                'titlu': event[1],
-                'descriere': event[2],
-                'data': event[3],
-                'ora': event[4],
-                'tip': event[5], 
-                'loc': {
-                    'raion': event[6],
-                    'oras': event[7],
-                    'strada': event[8]
-                },
-                'organizator': {
-                    'nume': event[9],
-                    'domeniu': event[10]
-                }
-            } for event in events]
-    
-    except sqlite3.Error as e:
-        return jsonify({'status': 'error', 'message': 'Failed to fetch events', 'error': str(e)}), 500
-    
-    return jsonify(events_list)
-
 #send informations to frontend about the event in the provided interval
 #example http://127.0.0.1:5000/events/interval?start_date=2024-09-01&end_date=2024-09-30
 @app.route('/events/interval', methods=['GET'])
@@ -253,6 +204,13 @@ def display_events_in_interval():
     try:
         start_date = request.args.get('start_date')
         end_date = request.args.get('end_date')
+
+        today = datetime.now()
+        if len(start_date) == 0:
+            start_date = today.replace(day=1)
+
+        if len(end_date) == 0:
+            end_date = (today.replace(day=28) + timedelta(days=4)).replace(day=1) - timedelta(days=1)
         
         if not start_date or not end_date:
             return jsonify({'status': 'error', 'message': 'Start and end dates are required'}), 400
