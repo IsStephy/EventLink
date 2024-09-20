@@ -147,10 +147,10 @@ def display_event_by_id(id):
     except sqlite3.Error as e:
         return jsonify({'status': 'error', 'message': 'Failed to fetch event', 'error': str(e)}), 500
 
-#send to the frontend data about 2 next event
-#example http://127.0.0.1:5000/events/next_two
-@app.route('/events/next_two', methods=['GET'])
-def display_next_two_events():
+#send to the frontend data about next events
+# Example: http://127.0.0.1:5000/events/next_events?limit=3
+@app.route('/events/next_events', methods=['GET'])
+def display_next_events():
     try:
         conn = get_db_connection()
         with conn:
@@ -158,6 +158,8 @@ def display_next_two_events():
             
             # Get today's date
             today = datetime.now().strftime('%Y-%m-%d')
+            # Extract the limit from query parameters or set it to be by default 2
+            limit = request.args.get('limit', default=2, type=int)
             
             cur.execute('''
                 SELECT eveniment.id, eveniment.titlu, eveniment.descriere, eveniment.data, eveniment.ora, eveniment.tip, 
@@ -168,8 +170,8 @@ def display_next_two_events():
                 JOIN organizator ON eveniment.organizator_id = organizator.id
                 WHERE eveniment.data >= ?
                 ORDER BY eveniment.data, eveniment.ora
-                LIMIT 2
-            ''', (today,))
+                LIMIT ?
+            ''', (today, limit))
             
             events = cur.fetchall()
             #does not need validation because information was extracted from database
@@ -197,55 +199,6 @@ def display_next_two_events():
     
     return jsonify(events_list)
 
-#send to teh frontend data about events this month 
-#example http://127.0.0.1:5000/events/current_month
-@app.route('/events/current_month', methods=['GET'])
-def display_events_current_month():
-    try:
-        conn = get_db_connection()
-        with conn:
-            cur = conn.cursor()
-            
-            today = datetime.now()
-            first_day = today.replace(day=1)
-            last_day = (today.replace(day=28) + timedelta(days=4)).replace(day=1) - timedelta(days=1)
-            
-            cur.execute('''
-                SELECT eveniment.id, eveniment.titlu, eveniment.descriere, eveniment.data, eveniment.ora, eveniment.tip, 
-                       loc.raion, loc.oras, loc.strada,
-                       organizator.nume, organizator.domeniu
-                FROM eveniment
-                JOIN loc ON eveniment.loc_id = loc.id
-                JOIN organizator ON eveniment.organizator_id = organizator.id
-                WHERE eveniment.data BETWEEN ? AND ?
-            ''', (first_day.strftime('%Y-%m-%d'), last_day.strftime('%Y-%m-%d')))
-            
-            events = cur.fetchall()
-            #does not need validation because information was extracted from database
-            
-            events_list = [{
-                'id': event[0],
-                'titlu': event[1],
-                'descriere': event[2],
-                'data': event[3],
-                'ora': event[4],
-                'tip': event[5], 
-                'loc': {
-                    'raion': event[6],
-                    'oras': event[7],
-                    'strada': event[8]
-                },
-                'organizator': {
-                    'nume': event[9],
-                    'domeniu': event[10]
-                }
-            } for event in events]
-    
-    except sqlite3.Error as e:
-        return jsonify({'status': 'error', 'message': 'Failed to fetch events', 'error': str(e)}), 500
-    
-    return jsonify(events_list)
-
 #send informations to frontend about the event in the provided interval
 #example http://127.0.0.1:5000/events/interval?start_date=2024-09-01&end_date=2024-09-30
 @app.route('/events/interval', methods=['GET'])
@@ -253,6 +206,13 @@ def display_events_in_interval():
     try:
         start_date = request.args.get('start_date')
         end_date = request.args.get('end_date')
+
+        today = datetime.now()
+        if len(start_date) == 0:
+            start_date = today.replace(day=1)
+
+        if len(end_date) == 0:
+            end_date = (today.replace(day=28) + timedelta(days=4)).replace(day=1) - timedelta(days=1)
         
         if not start_date or not end_date:
             return jsonify({'status': 'error', 'message': 'Start and end dates are required'}), 400
@@ -310,6 +270,7 @@ def display_events_in_interval():
 #http://127.0.0.1:5000/events/patch/3?titlu=Updated%20Title&descriere=Updated%20Description&data=2024-09-15&ora=14:00&raion=Updated%20Raion&oras=Updated%20Oras&strada=Updated%20Strada&nume=Updated%20Organizator&domeniu=Updated%20Domain
 @app.route('/events/patch/<int:id>', methods=['PATCH'])
 def update_event(id):
+
     data = request.json
     try:
         conn = get_db_connection()
@@ -317,6 +278,7 @@ def update_event(id):
             cur = conn.cursor()
 
             # Extract data from query parameters
+
             Titlu = data.get('titlu')
             Descriere = data.get('descriere')
             Data = data.get('data')
