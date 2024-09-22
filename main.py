@@ -276,9 +276,7 @@ def update_event(id):
         conn = get_db_connection()
         with conn:
             cur = conn.cursor()
-
-            # Extract data from query parameters
-
+            
             Titlu = data.get('titlu')
             Descriere = data.get('descriere')
             Data = data.get('data')
@@ -289,31 +287,91 @@ def update_event(id):
             Nume = data.get('nume')
             Domeniu = data.get('domeniu')
 
-            # does not need validation because if any parameters are empty the function COALECE does not modify the value
-            # Check if location needs updating
             if Raion or Oras or Strada:
-                cur.execute('''
-                    UPDATE loc
-                    SET raion = COALESCE(?, raion), 
-                        oras = COALESCE(?, oras), 
-                        strada = COALESCE(?, strada)
-                    WHERE id = (
-                        SELECT loc_id FROM eveniment WHERE id = ?
-                    )
-                ''', (Raion, Oras, Strada, id))
 
-            # Check if organizer needs updating
+                cur.execute('SELECT loc_id FROM eveniment WHERE id = ?', (id,))
+                loc_id = cur.fetchone()
+
+                if loc_id:
+                    loc_id = loc_id[0]
+
+                    cur.execute('SELECT raion, oras, strada FROM loc WHERE id = ?', (loc_id,))
+                    existing_loc = cur.fetchone()
+
+                    if existing_loc:
+                        existing_raion, existing_oras, existing_strada = existing_loc
+
+
+                        if (existing_raion != Raion) or (existing_oras != Oras) or (existing_strada != Strada):
+                            cur.execute('SELECT id FROM loc WHERE raion = ? AND oras = ? AND strada = ?', 
+                                        (Raion, Oras, Strada))
+                            loc_exists = cur.fetchone()
+
+                            if loc_exists:
+                                new_loc_id = loc_exists[0]
+                            else:
+                                cur.execute('''
+                                    INSERT INTO loc (raion, oras, strada)
+                                    VALUES (?, ?, ?)
+                                ''', (Raion or existing_raion, Oras or existing_oras, Strada or existing_strada))
+                                
+                                new_loc_id = cur.lastrowid
+
+                            cur.execute('''
+                                UPDATE eveniment
+                                SET loc_id = ?
+                                WHERE id = ?
+                            ''', (new_loc_id, id))
+                        else:
+                            cur.execute('''
+                                UPDATE loc
+                                SET raion = COALESCE(?, raion), 
+                                    oras = COALESCE(?, oras), 
+                                    strada = COALESCE(?, strada)
+                                WHERE id = ?
+                            ''', (Raion, Oras, Strada, loc_id))
+
             if Nume or Domeniu:
-                cur.execute('''
-                    UPDATE organizator
                     SET nume = COALESCE(?, nume), 
-                        domeniu = COALESCE(?, domeniu)
-                    WHERE id = (
-                        SELECT organizator_id FROM eveniment WHERE id = ?
-                    )
-                ''', (Nume, Domeniu, id))
+                cur.execute('SELECT organizator_id FROM eveniment WHERE id = ?', (id,))
+                organizator_id = cur.fetchone()
+                if organizator_id:
+                    organizator_id = organizator_id[0]
 
-            # Update event details
+                    cur.execute('SELECT nume, domeniu FROM organizator WHERE id = ?', (organizator_id,))
+                    existing_org = cur.fetchone()
+
+                    if existing_org:
+                        existing_nume, existing_domeniu = existing_org
+
+                        if (existing_nume != Nume) or (existing_domeniu != Domeniu):
+                            cur.execute('SELECT id FROM organizator WHERE nume = ? AND domeniu = ?', 
+                                        (Nume, Domeniu))
+                            org_exists = cur.fetchone()
+
+                            if org_exists:
+                                new_org_id = org_exists[0]
+                            else:
+                                cur.execute('''
+                                    INSERT INTO organizator (nume, domeniu)
+                                    VALUES (?, ?)
+                                ''', (Nume or existing_nume, Domeniu or existing_domeniu))
+                                
+                                new_org_id = cur.lastrowid
+
+                            cur.execute('''
+                                UPDATE eveniment
+                                SET organizator_id = ?
+                                WHERE id = ?
+                            ''', (new_org_id, id))
+                        else:
+                            cur.execute('''
+                                UPDATE organizator
+                                SET nume = COALESCE(?, nume), 
+                                    domeniu = COALESCE(?, domeniu)
+                                WHERE id = ?
+                            ''', (Nume, Domeniu, organizator_id))
+
             cur.execute('''
                 UPDATE eveniment
                 SET titlu = COALESCE(?, titlu),
