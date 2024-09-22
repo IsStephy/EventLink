@@ -332,7 +332,6 @@ def update_event(id):
                             ''', (Raion, Oras, Strada, loc_id))
 
             if Nume or Domeniu:
-                    SET nume = COALESCE(?, nume), 
                 cur.execute('SELECT organizator_id FROM eveniment WHERE id = ?', (id,))
                 organizator_id = cur.fetchone()
                 if organizator_id:
