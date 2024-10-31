@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import sqlite3
 import os
 from flask_cors import CORS
+import hashlib
 
 app = Flask(__name__)
 current_directory = os.path.dirname(os.path.abspath(__file__))
@@ -25,7 +26,7 @@ def admin():
 #example http://127.0.0.1:5000/add?titlu=Event1&descriere=Description1&data=2024-09-15&ora=14:00:00&tip=conference&raion=Raion1&oras=Oras1&strada=Strada1&nume=OrganizerName&domeniu=IT
 @app.route('/events/add', methods=['POST', 'OPTIONS'])
 def add_event():
-    data = request.get_json()  # Get JSON data from the request body
+    data = request.get_json()  
 
     Titlu = data.get('titlu')
     Descriere = data.get('descriere')
@@ -82,7 +83,6 @@ def add_event():
 
     finally:
         conn.close()
-    # r.headers["Access-Control-Allow-Origin"] = '*'
     return jsonify({
         'status': 'success',
         'message': 'Event added successfully',
@@ -100,6 +100,199 @@ def add_event():
         }
     }), 200
 
+@app.route('/user/utilizator', methods=['POST'])
+def add_user():
+    data = request.get_json() 
+
+    prenume = data.get('prenume')
+    nume = data.get('nume')
+    parola = data.get('parola')
+    statut = data.get('statut')
+    liked_events = data.get('liked_events', []) 
+
+    if not (prenume and nume and parola and statut):
+        return jsonify({'status': 'error', 'message': 'Required fields are missing'}), 400
+
+    hashed_password = hashlib.sha256(parola.encode()).hexdigest()
+
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        cur.execute(
+            "INSERT INTO utilizator (prenume, nume, parola, statut, liked) VALUES (?, ?, ?, ?, ?)",
+            (prenume, nume, hashed_password, statut, json.dumps(liked_events))
+        )
+        conn.commit()
+
+    except sqlite3.Error as e:
+        conn.rollback()
+        return jsonify({'status': 'error', 'message': 'Failed to add user', 'error': str(e)}), 500
+
+    finally:
+        conn.close()
+
+    return jsonify({'status': 'success', 'message': 'User added successfully'}), 200
+
+import hashlib
+
+# Function to verify the password and return user status and liked events
+@app.route('/user/authenticate', methods=['POST'])
+def authenticate_user():
+    data = request.get_json()
+
+    name = data.get('name')
+    surname = data.get('surname')
+    password = data.get('password')
+
+    if not name or not surname or not password:
+        return jsonify({'status': 'error', 'message': 'Name, surname, and password are required'}), 400
+
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        cur.execute("SELECT password_hash, status, liked FROM users WHERE name = ? AND surname = ?", (name, surname))
+        user = cur.fetchone()
+
+        if user is None:
+            return jsonify({'status': 'error', 'message': 'User not found'}), 404
+
+        password_hash = hashlib.sha256(password.encode()).hexdigest()
+        stored_password_hash = user['password_hash']
+        
+        if password_hash != stored_password_hash:
+            return jsonify({'status': 'error', 'message': 'Invalid password'}), 403
+
+        return jsonify({
+            'status': 'Authentification passed successful',
+            'data': {
+                'user_status': user['status'],
+                'liked_events': user['liked_events'] 
+            }
+        }), 200
+
+    except sqlite3.Error as e:
+        return jsonify({'status': 'error', 'message': 'Database error', 'error': str(e)}), 500
+
+    finally:
+        conn.close()
+
+import json
+
+# Function to add a liked event to the liked_events field for a user
+@app.route('/user/like_event', methods=['POST'])
+def like_event():
+    data = request.get_json()
+
+    # Extract user ID and event ID from the request
+    user_id = data.get('user_id')
+    id_eveniment = data.get('id_eveniment')
+
+    if not user_id or not id_eveniment:
+        return jsonify({'status': 'error', 'message': 'User ID and event ID are required'}), 400
+
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        cur.execute("SELECT liked_events FROM users WHERE id = ?", (user_id,))
+        user = cur.fetchone()
+
+        if user is None:
+            return jsonify({'status': 'error', 'message': 'User not found'}), 404
+
+        liked_events = json.loads(user['liked_events']) if user['liked_events'] else {'data': {}}
+
+        next_id = max(map(int, liked_events['data'].keys()), default=0) + 1
+
+        liked_events['data'][str(next_id)] = id_eveniment
+
+        cur.execute("UPDATE users SET liked = ? WHERE id = ?", (json.dumps(liked_events), user_id))
+        conn.commit()
+
+        return jsonify({
+            'status': 'success',
+            'message': 'Event liked successfully',
+            'liked_events': liked_events
+        }), 200
+
+    except sqlite3.Error as e:
+        return jsonify({'status': 'error', 'message': 'Database error', 'error': str(e)}), 500
+
+    finally:
+        conn.close()
+
+import json
+from flask import jsonify, request
+
+# Function to retrieve user profile and liked event details
+@app.route('/user/<int:id>', methods=['GET'])
+def get_user_profile(id):
+    if not id:
+        return jsonify({'status': 'error', 'message': 'User ID is required'}), 400
+
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        cur.execute("SELECT name, surname, liked_events FROM users WHERE id = ?", (id,))
+        user = cur.fetchone()
+
+        if user is None:
+            return jsonify({'status': 'error', 'message': 'User not found'}), 404
+
+        name, surname, liked_events_json = user['name'], user['surname'], user['liked_events']
+
+        liked_events = json.loads(liked_events_json)['data'] if liked_events_json else {}
+        event_ids = list(liked_events.values())
+
+        liked_event_details = []
+        if event_ids:
+            cur.execute(f"""
+                SELECT id, titlu, descriere, data, ora, tip 
+                FROM eveniment 
+                WHERE id IN ({','.join(['?'] * len(event_ids))})
+            """, event_ids)
+            liked_event_details = cur.fetchall()
+
+        return jsonify({
+            'status': 'success',
+            'profile': {
+                'name': name,
+                'surname': surname,
+                'liked_events': liked_event_details
+            }
+        }), 200
+
+    except sqlite3.Error as e:
+        return jsonify({'status': 'error', 'message': 'Database error', 'error': str(e)}), 500
+
+    finally:
+        conn.close()
+
+@app.route('/user/<int:id>', methods=['DELETE'])
+def delete_user(id):
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        cur.execute("SELECT * FROM users WHERE id = ?", (id,))
+        user = cur.fetchone()
+
+        if user is None:
+            return jsonify({'status': 'error', 'message': 'User not found'}), 404
+
+        cur.execute("DELETE FROM users WHERE id = ?", (id,))
+        conn.commit()
+
+        return jsonify({'status': 'success', 'message': 'User deleted successfully'}), 200
+
+    except sqlite3.Error as e:
+        return jsonify({'status': 'error', 'message': 'Database error', 'error': str(e)}), 500
+
+    finally:
+        conn.close()
 
 #sent to frontend data about the event by id
 #example http://127.0.0.1:5000/events/2
