@@ -118,15 +118,17 @@ def add_user():
         conn = get_db_connection()
         cur = conn.cursor()
 
+        # Check if the email already exists
+        cur.execute("SELECT id FROM utilizator WHERE email = ?", (email,))
+        if cur.fetchone():
+            return jsonify({'status': 'error', 'message': 'Email already exists'}), 400
+
+        # Insert the new user
         cur.execute(
             "INSERT INTO utilizator (email, parola, statut, liked) VALUES (?, ?, ?, ?)",
             (email, hashed_password, statut, json.dumps(liked_events))
         )
         conn.commit()
-
-    except sqlite3.IntegrityError:
-        conn.rollback()
-        return jsonify({'status': 'error', 'message': 'Email already exists'}), 400
 
     except sqlite3.Error as e:
         conn.rollback()
