@@ -27,8 +27,7 @@ CREATE TABLE organizator (
 
 CREATE TABLE utilizator (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	prenume VARCHAR NOT NULL,
-	nume VARCHAR NOT NULL,
+	email VARCHAR NOT NULL,
 	parola VARCHAR NOT NULL,
 	statut TEXT CHECK(statut IN ('administrator', 'utilizator')) NOT NULL,
 	liked_eveniments TEXT

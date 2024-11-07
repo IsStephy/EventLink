@@ -100,17 +100,16 @@ def add_event():
         }
     }), 200
 
-@app.route('/user/utilizator', methods=['POST'])
+@app.route('/user/register', methods=['POST'])
 def add_user():
-    data = request.get_json() 
+    data = request.get_json()
 
-    prenume = data.get('prenume')
-    nume = data.get('nume')
+    email = data.get('email')
     parola = data.get('parola')
     statut = data.get('statut')
-    liked_events = data.get('liked_events', []) 
+    liked_events = data.get('liked_events', [])
 
-    if not (prenume and nume and parola and statut):
+    if not (email and parola and statut):
         return jsonify({'status': 'error', 'message': 'Required fields are missing'}), 400
 
     hashed_password = hashlib.sha256(parola.encode()).hexdigest()
@@ -120,10 +119,14 @@ def add_user():
         cur = conn.cursor()
 
         cur.execute(
-            "INSERT INTO utilizator (prenume, nume, parola, statut, liked) VALUES (?, ?, ?, ?, ?)",
-            (prenume, nume, hashed_password, statut, json.dumps(liked_events))
+            "INSERT INTO utilizator (email, parola, statut, liked) VALUES (?, ?, ?, ?)",
+            (email, hashed_password, statut, json.dumps(liked_events))
         )
         conn.commit()
+
+    except sqlite3.IntegrityError:
+        conn.rollback()
+        return jsonify({'status': 'error', 'message': 'Email already exists'}), 400
 
     except sqlite3.Error as e:
         conn.rollback()
@@ -137,38 +140,37 @@ def add_user():
 import hashlib
 
 # Function to verify the password and return user status and liked events
-@app.route('/user/authenticate', methods=['POST'])
+@app.route('/user/authentication', methods=['POST'])
 def authenticate_user():
     data = request.get_json()
 
-    name = data.get('name')
-    surname = data.get('surname')
+    email = data.get('email')
     password = data.get('password')
 
-    if not name or not surname or not password:
-        return jsonify({'status': 'error', 'message': 'Name, surname, and password are required'}), 400
+    if not email or not password:
+        return jsonify({'status': 'error', 'message': 'Email and password are required'}), 400
 
     try:
         conn = get_db_connection()
         cur = conn.cursor()
 
-        cur.execute("SELECT password_hash, status, liked FROM users WHERE name = ? AND surname = ?", (name, surname))
+        cur.execute("SELECT parola, statut, liked FROM utilizator WHERE email = ?", (email,))
         user = cur.fetchone()
 
         if user is None:
             return jsonify({'status': 'error', 'message': 'User not found'}), 404
 
         password_hash = hashlib.sha256(password.encode()).hexdigest()
-        stored_password_hash = user['password_hash']
-        
+        stored_password_hash = user[0]
+
         if password_hash != stored_password_hash:
             return jsonify({'status': 'error', 'message': 'Invalid password'}), 403
 
         return jsonify({
-            'status': 'Authentification passed successful',
+            'status': 'success',
             'data': {
-                'user_status': user['status'],
-                'liked_events': user['liked_events'] 
+                'user_status': user[1],
+                'liked_events': json.loads(user[2])  # Convert liked events from JSON string to Python list
             }
         }), 200
 
@@ -177,6 +179,7 @@ def authenticate_user():
 
     finally:
         conn.close()
+
 
 import json
 
@@ -271,7 +274,7 @@ def get_user_profile(id):
     finally:
         conn.close()
 
-@app.route('/user/<int:id>', methods=['DELETE'])
+@app.route('/user/delete/<int:id>', methods=['DELETE'])
 def delete_user(id):
     try:
         conn = get_db_connection()
