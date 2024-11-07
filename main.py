@@ -239,13 +239,13 @@ def get_user_profile(id):
         conn = get_db_connection()
         cur = conn.cursor()
 
-        cur.execute("SELECT name, surname, liked_events FROM users WHERE id = ?", (id,))
+        cur.execute("SELECT email, liked_events FROM users WHERE id = ?", (id,))
         user = cur.fetchone()
 
         if user is None:
             return jsonify({'status': 'error', 'message': 'User not found'}), 404
 
-        name, surname, liked_events_json = user['name'], user['surname'], user['liked_events']
+        email, liked_events_json = user['email'], user['liked_events']
 
         liked_events = json.loads(liked_events_json)['data'] if liked_events_json else {}
         event_ids = list(liked_events.values())
@@ -262,8 +262,7 @@ def get_user_profile(id):
         return jsonify({
             'status': 'success',
             'profile': {
-                'name': name,
-                'surname': surname,
+                'email': email,
                 'liked_events': liked_event_details
             }
         }), 200
