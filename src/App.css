@@ -70,6 +70,7 @@
 
 .filtered-events-container-div {
   margin-right: 20px;
+  margin-top: 52px;
 }
 
 .back-button {
@@ -91,8 +92,8 @@
 }
 
 .no-events-found-css {
-  margin-top: 160px;
-  margin-left: 65px;
+  margin-top: 200px;
+  margin-left: 55px;
 }
 
 /* Dates not in month fade */
@@ -442,6 +443,7 @@
   justify-content: space-between; /* Space between items */
   align-items: center; /* Vertically center items */
   margin-top: 50px;
+  margin-left: -450px;
 }
 
 /* Background gradient */
@@ -559,6 +561,8 @@ body, .upcoming-events {
 
 .upcoming-events-text-css {
   color: rgba(19,19,65,255);
+  margin-top: 60px;
+  margin-bottom: 10px;
 }
 
 .calendar-section {
@@ -903,13 +907,30 @@ body, .upcoming-events {
 }
 
 .more-events-container-css {
-  margin-top: 127px;
+  margin-top: 177px;
 }
 
 .search-results-text-css {
   margin-left: 15px;
-  margin-bottom: -110px;
-  margin-top: 100px;
-
+  margin-bottom: -170px;
+  margin-top: 190px;
 }
 
+.half-of-upcoming-events-css {
+  margin-top: -8px;
+}
+
+.logo-icon-css {
+ /* Adjust spacing between the logo and search elements */
+}
+
+.utm-logo-css {
+  width: 150px; /* Adjust the size of the logo */
+  height: auto;
+  margin-left: -150px;
+  margin-right: -160px;
+}
+
+.utm-logo-css {
+  cursor: pointer;
+}

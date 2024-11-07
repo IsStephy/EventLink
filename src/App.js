@@ -7,6 +7,9 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import './App.css';
 import { Event, Organizer, Place } from './EventModels';
 import logo from './images/utm_logo.png';
+import { LoginPage } from './Login';
+import './Login.css'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
   const [inputValue, setInputValue] = useState('');
@@ -250,6 +253,11 @@ function App() {
   };
 
   return (
+    <Router>
+      <Routes>
+      <Route 
+      path = "/home"
+      element = {
     <div className='purple-container-css'>
       <div className="gradient-background">
         <div className="calendar-and-upc-events-css">
@@ -307,6 +315,22 @@ function App() {
           </div>
           <div className="calendar-section">
             <div className="search-icon-text-css">
+            <div className="logo-icon-css"> 
+            </div>
+            
+            <img 
+  src={logo} 
+  alt="UTM Logo" 
+  className="utm-logo-css" 
+  onClick={() => {
+    setSelectedEvent(null);
+    setSearchPerformed(false);
+    setClickedEvents([]);
+    setFilteredEvents([]);
+    setExpandedEventId(null);
+  }}
+/>
+
               <div className="icon-calendar-text-css">
                 <CalendarIcon 
                   onClick={() => {
@@ -344,7 +368,13 @@ function App() {
           </div>
         </div>
       </div>
-    </div>
+    </div>}
+    />
+
+    <Route path="/" element={<LoginPage />} />
+    
+    </Routes>
+    </Router>
   );
 }
 
