@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import './Login.css';
+import { useNavigate } from 'react-router-dom';
 
 export const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -20,6 +22,7 @@ export const LoginPage = () => {
             const data = await response.json();
 
             if (response.ok) {
+            navigate("\home");
                 alert("Login successful");
             } else {
                 alert(data.message || "Login failed");
