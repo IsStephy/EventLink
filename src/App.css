@@ -1,6 +1,24 @@
 /* src/App.css */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
+.logo-and-events-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.logo-container {
+  margin-top: 50px;
+  margin-left: 20px;
+  margin-bottom: 1px;
+}
+
+.utm-logo {
+  width: 195px; /* Adjust as needed */
+  height: auto;
+  cursor: pointer;
+}
+
 .event-container {
   display: flex;
   flex-direction: column;
@@ -63,7 +81,7 @@
   padding: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   width: 250px; /* Adjust as needed */
-  margin-top: 147.5px; /* Align with the initial event list */
+  margin-top: 30px; /* Align with the initial event list */
   font-size: 13px;
   margin-right: -20px;
 }
@@ -554,7 +572,7 @@ body, .upcoming-events {
 }
 
 .upcoming-events-section {
-  padding-top: 120px;
+  padding-top: 30px;
   padding-left: 30px;
   margin-left: -35px; /* Adjust the right margin to create space */
 }
@@ -907,7 +925,11 @@ body, .upcoming-events {
 }
 
 .more-events-container-css {
+<<<<<<< HEAD
   margin-top: 177px;
+=======
+  margin-top: 30px;
+>>>>>>> 064156a7d72e4ad5e80815c928ed41b6189073ef
 }
 
 .search-results-text-css {

@@ -26,7 +26,7 @@ function App() {
   useEffect(() => {
     const fetchAndOrganizeEvents = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:5000/events/interval?start_date=2024-09-01&end_date=2025-09-30');
+        const response = await fetch('http://127.0.0.1:3001/events/interval?start_date=2024-09-01&end_date=2025-09-30');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -253,6 +253,14 @@ function App() {
     setExpandedEventId(null);
   };
 
+  const handleLogoClick = () => {
+    setSearchPerformed(false);
+    setSelectedEvent(null);
+    setClickedEvents([]);
+    setFilteredEvents([]);
+    setExpandedEventId(null);
+  };
+
   return (
     <Router>
       <Routes>
@@ -262,57 +270,67 @@ function App() {
     <div className='purple-container-css'>
       <div className="gradient-background">
         <div className="calendar-and-upc-events-css">
-          <div className="upcoming-events-or-events-from-calendar">
-            {error && <p className="error-message">{error}</p>}
-            {clickedEvents.length > 0 ? (
-              renderClickedEvents()
-            ) : (
-              <>
-                {!searchPerformed && !selectedEvent && (
-                  <div className="upcoming-events-section">
-                    <h2 className='upcoming-events-text-css'>Upcoming Events</h2>
-                    <HalfUpcomingEvents events={events} expandedEventId={expandedEventId} onShowMore={handleShowMore} onHideMore={handleHideMore} />
-                  </div>
-                )}
-                {searchPerformed && filteredEvents.length === 1 && (
-                  <>
-                    <h2 className='search-results-text-css'>Search results</h2>
+          <div className="logo-and-events-column">
+            <div className="logo-container">
+              <img 
+                src={logo} 
+                alt="UTM Logo" 
+                className="utm-logo" 
+                onClick={handleLogoClick}
+              />
+            </div>
+            <div className="upcoming-events-or-events-from-calendar">
+              {error && <p className="error-message">{error}</p>}
+              {clickedEvents.length > 0 ? (
+                renderClickedEvents()
+              ) : (
+                <>
+                  {!searchPerformed && !selectedEvent && (
+                    <div className="upcoming-events-section">
+                      <h2 className='upcoming-events-text-css'>Upcoming Events</h2>
+                      <HalfUpcomingEvents events={events} expandedEventId={expandedEventId} onShowMore={handleShowMore} onHideMore={handleHideMore} />
+                    </div>
+                  )}
+                  {searchPerformed && filteredEvents.length === 1 && (
+                    <>
+                      <h2 className='search-results-text-css'>Search results</h2>
+                      <FilteredEvents 
+                        key={filteredEvents[0].id}
+                        event={filteredEvents[0]} 
+                        onBack={handleBackClick}
+                      />
+                    </>
+                  )}
+                  {searchPerformed && filteredEvents.length > 1 && (
+                    <>
+                      <h2 className='search-results-text-css'>Search results</h2>
+                      <div className='more-events-container-css'>
+                        {filteredEvents.map((event, index) => (
+                          <DisplayMoreEvents 
+                            key={index}
+                            event={event}
+                          />
+                        ))}
+                      </div>
+                      <div className="back-button-container">
+                        <button onClick={handleBackClick} className="back-button">
+                          <FontAwesomeIcon icon={faArrowLeft} /> Back
+                        </button>
+                      </div>
+                    </>
+                  )}
+                  {searchPerformed && filteredEvents.length === 0 && (
+                    <p className='no-events-found-css'>No events found.</p>
+                  )}
+                  {selectedEvent && (
                     <FilteredEvents 
-                      key={filteredEvents[0].id}
-                      event={filteredEvents[0]} 
+                      event={selectedEvent}
                       onBack={handleBackClick}
                     />
-                  </>
-                )}
-                {searchPerformed && filteredEvents.length > 1 && (
-                  <>
-                    <h2 className='search-results-text-css'>Search results</h2>
-                    <div className='more-events-container-css'>
-                      {filteredEvents.map((event, index) => (
-                        <DisplayMoreEvents 
-                          key={index}
-                          event={event}
-                        />
-                      ))}
-                    </div>
-                    <div className="back-button-container">
-                      <button onClick={handleBackClick} className="back-button">
-                        <FontAwesomeIcon icon={faArrowLeft} /> Back
-                      </button>
-                    </div>
-                  </>
-                )}
-                {searchPerformed && filteredEvents.length === 0 && (
-                  <p className='no-events-found-css'>No events found.</p>
-                )}
-                {selectedEvent && (
-                  <FilteredEvents 
-                    event={selectedEvent}
-                    onBack={handleBackClick}
-                  />
-                )}
-              </>
-            )}
+                  )}
+                </>
+              )}
+            </div>
           </div>
           <div className="calendar-section">
             <div className="search-icon-text-css">
