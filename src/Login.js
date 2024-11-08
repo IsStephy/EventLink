@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
 export const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -21,6 +23,8 @@ export const LoginPage = () => {
 
             if (response.ok) {
                 alert("Login successful");
+                localStorage.setItem('isLoggedIn', 'true');
+                navigate('/home');
             } else {
                 alert(data.message || "Login failed");
             }

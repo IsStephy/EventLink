@@ -21,6 +21,7 @@ function App() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [expandedEventId, setExpandedEventId] = useState(null);
   const [error, setError] = useState(null);
+  const[logIn, setLogIn] = useState(false);
 
   useEffect(() => {
     const fetchAndOrganizeEvents = async () => {
