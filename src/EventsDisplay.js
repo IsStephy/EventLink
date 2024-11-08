@@ -1,11 +1,38 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faMapMarkerAlt, faChevronDown, faChevronUp, faCalendarDay, faClock, faTag, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { DateIcon, PointIcon, ShowMoreIcon, ShowLessButton, VerticalBar, ClockIcon, PlaceIcon, OrganizerIcon } from './Icons';
+import { StarIcon, DateIcon, PointIcon, ShowMoreIcon, ShowLessButton, VerticalBar, ClockIcon, PlaceIcon, OrganizerIcon } from './Icons';
 import { faCalendarAlt, faCircle } from '@fortawesome/free-solid-svg-icons';
 import { Place } from './EventModels';
 
-export const HalfUpcomingEvents = ({ events, expandedEventId, onShowMore, onHideMore }) => {
+export const EventCard = ({ event, onFavorite, isFavorited, onClick }) => {
+  return (
+    <div 
+      className={`event-card ${event.tip === 'Obligatoriu' ? 'mandatory-event' : 'optional-event'}`}
+      onClick={onClick}
+    >
+      <div className="event-header">
+        <h3 className="event-title">{event.titlu}</h3>
+        <button
+          className="favorite-button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onFavorite(event);
+          }}
+          aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+        >
+          <StarIcon filled={isFavorited} />
+        </button>
+      </div>
+      <p className="event-time">{event.ora}</p>
+      <p className="event-location">{event.place?.oras}, {event.place?.strada}</p>
+      <p className="event-type">{event.tip}</p>
+    </div>
+  );
+};
+
+export const HalfUpcomingEvents = ({ events, expandedEventId, onShowMore, onHideMore, onFavorite,
+  favoritedEvents }) => {
   const lastEvents = events.slice(-2);
   let arrayEventTypes = [];
 
@@ -14,6 +41,18 @@ export const HalfUpcomingEvents = ({ events, expandedEventId, onShowMore, onHide
   });
 
   return (
+    <div className="upcoming-events-container">
+      <div className="events-list">
+        {lastEvents.map((event) => (
+          <EventCard
+            key={event.id}
+            event={event}
+            onFavorite={onFavorite}
+            isFavorited={favoritedEvents.some(fav => fav.id === event.id)}
+            onClick={() => onShowMore(event.id)}
+          />
+        ))}
+      </div>
     <div className='half-of-upcoming-events-css'>
       {lastEvents.map((event, index) => (
         <div key={index}>
@@ -103,6 +142,7 @@ export const HalfUpcomingEvents = ({ events, expandedEventId, onShowMore, onHide
         </div>
       ))}
     </div>
+    </div>
   );
 }
 
@@ -187,4 +227,3 @@ export const DisplayMoreEvents = ({ event }) => {
     </div>
   );
 }
-
