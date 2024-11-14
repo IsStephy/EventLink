@@ -1,0 +1,88 @@
+/* STYLING LOGIN PAGE */
+
+body {
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .login-container {
+    display: flex;
+    gap: 100px;
+    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .welcome-back-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(200deg, #f9f5ea, #b6a9f2, #e7f4f9, #b6a9f2);
+    text-shadow: 2px 4px 10px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .border-container {
+    background-color: #f9f7f8;
+    padding: 50px;
+  }
+  
+  .welcome-back-container h1 {
+    color: white;
+    font-size: 4rem;
+    z-index: 10; 
+    padding: 50px;
+  }
+  
+  .login-info-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 50px;
+  }
+  
+  .more-login-text-css {
+    color: #848484;
+    font-size: 13px;
+    margin-top: -5px;
+  }
+  
+  .username-text-css {
+    color: #848484;
+    margin-top: 40px;
+    font-size: 15px;
+  }
+  
+  .password-text-css {
+    color: #848484;
+    margin-top: 13px;
+    font-size: 15px;
+  }
+  
+  .login-button {
+    width: 110%;
+    margin-top: 50px;
+    padding: 13px;
+    cursor: pointer;
+    background-color: #b6a9f2;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    border: 1px solid #b6a9f2;
+    border-radius: 5px; 
+    transition: background-color 0.3s ease, transform 0.2s ease; 
+  }
+  
+  .login-button:hover {
+    background-color: #a58fe2; 
+  }
+  
+  .login-button:active {
+    background-color: #9479d1; 
+    transform: scale(0.98); 
+  }
+  
+  .input-box {
+    width: 100%;
+    padding: 13px;
+    border: 0.7px solid gray; 
+    border-radius: 7px;
+  }

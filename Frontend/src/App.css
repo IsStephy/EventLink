@@ -1,0 +1,969 @@
+/* src/App.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+
+.favorite-button {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.favorite-button:hover {
+  transform: scale(1.1);
+}
+
+.favorite-button.favorited svg {
+  fill: #FFD700;
+}
+
+.events-filter {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.events-filter button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  background: #f0f0f0;
+}
+
+
+
+
+
+.event-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+  padding: 0px;
+}
+
+.helpful-p-css {
+  font-size: 2px;
+}
+
+.event-date {
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+}
+
+.event-details-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0px; /* Gap between the date and event details */
+}
+
+.event-details {
+  cursor: pointer;
+  padding: 2px; /* Adjust padding as needed */
+  display: flex;
+  flex-direction: column; /* Layout in a column */
+  align-items: center; /* Center items horizontally */
+  justify-content: center; /* Center items vertically */
+  text-align: center; /* Center text */
+  width: 100%; /* Full width of the parent container */
+  height: 100%; /* Full height of the parent container */
+  box-sizing: border-box; /* Include padding in the width/height calculation */
+  margin-bottom: 7px;
+}
+
+.event-div-calendar-tile-css {
+  flex-direction: column; /* Layout in a column */
+  align-items: center; /* Center items horizontally */
+  justify-content: center; /* Center items vertically */
+}
+
+.first-event {
+  text-align: center;
+  padding: 2px;
+  margin-bottom: 2px;
+}
+
+.event-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  margin-top: 8px;
+}
+
+.filtered-events-container {
+  background-color: white;
+  border-radius: 13px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 250px; /* Adjust as needed */
+  margin-top: 147.5px; /* Align with the initial event list */
+  font-size: 13px;
+  margin-right: -20px;
+}
+
+.filtered-events-container-div {
+  margin-right: 20px;
+  margin-top: 52px;
+}
+
+.back-button {
+  background-color: rgba(239, 236, 251, 0.8);
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 15px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: rgba(131, 109, 244, 1);
+  transition: background-color 0.3s ease;
+  margin-top: 15px;
+}
+
+.back-button:hover {
+  background-color: rgba(214, 209, 245, 1);
+}
+
+.no-events-found-css {
+  margin-top: 200px;
+  margin-left: 55px;
+}
+
+/* Dates not in month fade */
+.faded-date {
+  opacity: 0.5;
+}
+
+.faded-date .event-dot {
+  opacity: 0.3;
+}
+
+/* Event container positioning */
+.event-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  padding-bottom: 5px; /* Ensure there's space between event and dots */
+}
+
+/* Event indicator styling */
+.event-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  margin-top: auto; /* Push indicators to the bottom */
+  padding-top: 2px;
+}
+
+.event-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 8px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.1s ease-in-out, opacity 0.2s ease-in-out;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.event-dot:hover {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+.mandatory-dot {
+  background-color: rgba(255, 39, 39, 0.6);
+}
+
+.optional-dot {
+  background-color: rgba(39, 196, 255, 0.6);
+}
+
+.first-event {
+  font-size: 8px;
+  padding: 2px;
+  border-radius: 3px;
+  margin-bottom: 2px;
+  cursor: pointer;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.first-event:hover {
+  opacity: 0.8;
+}
+
+.mandatory-event {
+  background-color: rgba(255, 39, 39, 0.2); /* More faded red */
+  color: rgba(255, 39, 39, 0.8);
+}
+
+.optional-event {
+  background-color: rgba(39, 196, 255, 0.2); /* More faded blue */
+  color: rgba(39, 196, 255, 0.8);
+}
+
+.event-title {
+  margin: 0;
+  font-weight: bold;
+  white-space: normal; /* Allow the text to wrap */
+  word-wrap: break-word; /* Ensure long words break to the next line */
+  overflow: visible; /* Make sure the full text is displayed */
+  font-size: 9px;
+}
+
+.event-time {
+  margin: 0;
+  font-size: 1em; /* Increased font size */
+}
+
+
+.filtered-event-css {
+  font-family: 'Poppins', sans-serif;
+}
+
+.filtered-event-css h4 {
+  color: rgba(19, 19, 65, 1);
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.filtered-event-css p {
+  color: rgba(99, 99, 144, 1);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.event-detail {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.event-detail-icon {
+  margin-right: 10px;
+  color: rgba(131, 109, 244, 1);
+}
+
+.event-detail-icon-more {
+  margin-right: 7px;
+  color: rgba(131, 109, 244, 1);
+  font-size: 12.5px;
+}
+
+.event-detail-text {
+  flex-grow: 1;
+}
+
+.upcoming-events-or-events-from-calendar {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 300px; /* Adjust as needed */
+}
+
+/* Calendar tile styling */
+.react-calendar__tile {
+  position: relative;
+  height: 120px; /* Increased height to accommodate events and indicators */
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  box-sizing: border-box;
+  
+}
+
+.react-calendar__tile abbr {
+  position: absolute;
+  top: 5px; /* Position the date at the top */
+  left: 5px;
+  font-size: 1.2em;
+}
+
+
+/* Event box styling */
+.event-on-calendar-button-css {
+  margin-top: 5px; /* Ensure there is a 5px space between the date and the first event */
+  background-color: rgba(255, 229, 229, 0.7); /* Light red background for mandatory events */
+  color: rgba(255, 39, 39, 1);
+  font-size: 8px;
+  line-height: 1.2;
+  padding: 2px 4px;
+  border: none;
+  border-radius: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  height: 18px;
+  box-sizing: border-box;
+  display: block;
+  text-align: left;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.event-on-calendar-button-css.optional-event {
+  background-color: rgba(229, 249, 253, 0.7); /* Light blue background for optional events */
+  color: rgba(39, 196, 255, 1);
+}
+
+
+/* General styles for the calendar tiles */
+.react-calendar__tile {
+  box-sizing: border-box; 
+  width: 20px;
+  height: 90px;
+  display: flex;
+  align-items: flex-end; /* Aligns items to the bottom */
+  justify-content: center; /* Aligns items to the right */
+  border: 1.2px solid rgba(237, 234, 254, 1); 
+  font-size: 9px;
+  padding-top: 7px;
+  padding-right: 7px;
+  background-color: white;
+  color: rgb(119, 118, 118);
+  border-radius: 2.8px;
+  font-weight: bold;
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+}
+
+
+/* Styling for the day number */
+.react-calendar__tile abbr {
+  position: absolute;
+  top: 5px; /* Adjust vertical position */
+  right: 5px; /* Adjust horizontal position */
+  font-size: 0.9em; /* Adjust the size of the day number */
+}
+
+/* Navigation bar for the calendar */
+.react-calendar__navigation {
+  background-color: white;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+/* Weekday labels styling */
+.react-calendar__month-view__weekdays {
+  display: flex;
+  justify-content: space-between; /* Space between weekdays */
+  align-items: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: rgba(128, 107, 244, 1);
+  border: 1.2px solid rgba(237, 234, 254, 1);
+  border-radius: 5px;
+  margin-bottom: 0;
+  background-color: rgba(240, 239, 253, 1);
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+/* Styling each weekday */
+.react-calendar__month-view__weekdays div {
+  flex: 1; /* Each weekday takes equal space */
+  text-align: center; /* Centers text horizontally */
+  font-size: 14px;
+}
+
+.react-calendar__navigation__prev-button,
+.react-calendar__navigation__next-button {
+  color: rgba(131, 109, 244, 255); 
+  background-color: white; 
+  border: 1px solid rgba(131, 109, 244, 0.2); 
+  border-radius: 10px;
+  font-size: 1.5em; 
+  padding: 10px; 
+  width: 40px; 
+  height: 40px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.react-calendar__navigation__prev-button:hover,
+.react-calendar__navigation__next-button:hover {
+  background-color: rgba(214, 209, 245, 255); /* Darker background on hover */
+  box-shadow: 0px 4px 6px rgba(131, 109, 244, 0.2); /* Add shadow on hover */
+  cursor: pointer; /* Show hand cursor on hover */
+}
+
+
+.react-calendar__navigation__label {
+  border: none;
+  background-color: transparent;
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+/* Calendar dimensions */
+.react-calendar {
+  width: 100%; /* Takes up full width of the container */
+  height: 100%; /* Takes up full height of the container */
+  box-sizing: border-box; /* Includes padding and border in element's total width and height */
+}
+
+
+/* Styling for events inside the calendar tiles */
+.event-css {
+  margin-top: 5px;
+  font-size: 8px;
+  width: 100%;
+  height: 70%;
+  padding: 5px;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+
+/* for m/o events*/
+.event-css.mandatory-event {
+  background-color: rgba(255, 229, 229, 1); /* Light red background */
+  color: rgba(255, 39, 39, 1); /* Red text color */
+}
+
+.event-css.optional-event {
+  background-color: rgba(229, 249, 253, 1); /* Light blue background */
+  color: rgba(39, 196, 255, 1); /* Blue text color */
+}
+
+
+.calendar-and-upc-events-css {
+  display: flex;
+  justify-content: space-between;
+  margin-right: 25px; /* Matches padding of gradient-background for consistency */
+  box-sizing: border-box;
+  gap: 50px; /* Add a gap between the upcoming events and calendar */
+  margin-top: -15px;
+  margin-bottom: 30px;
+  margin-left: 20px;
+  
+}
+
+/* Hide double arrows in navigation */
+.react-calendar__navigation__arrow.react-calendar__navigation__prev2-button,
+.react-calendar__navigation__arrow.react-calendar__navigation__next2-button {
+  display: none;
+}
+
+/* Align single arrows to the right */
+.react-calendar__navigation {
+  display: flex;
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+/* Push the date label to the left */
+.react-calendar__navigation__label {
+  margin-right: auto;
+}
+
+/* Styling for search icon and text */
+.search-icon-text-css {
+  display: flex; /* Horizontal alignment */
+  justify-content: space-between; /* Space between items */
+  align-items: center; /* Vertically center items */
+  margin-top: 50px;
+  margin-left: -450px;
+}
+
+/* Background gradient */
+.gradient-background {
+  min-height: 100vh;
+  background: linear-gradient(20deg, rgba(225, 241, 247, 1), rgba(250, 245, 234, 1), rgba(245, 247, 248, 1));
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px; /* Adjust horizontal padding to move contents closer to the left */
+  box-sizing: border-box;
+  /* Add border properties */
+  border: 15px solid white; /* Change the thickness as needed */
+  border-radius: 20px;     /* Optional: Rounded corners for the border */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Adds a subtle shadow for depth */
+  background-clip: padding-box;
+}
+
+.purple-container-css {
+  /* Add border properties */
+  border: 60px solid rgba(235,232,246,255); /* Change the thickness as needed */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Adds a subtle shadow for depth */
+}
+
+.icon-calendar-text-css {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+/* src/App.css */
+body, .upcoming-events {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400; /* Use the desired weight (400 for regular, 600 for semibold) */
+}
+
+.calendar-icon-css {
+  color: #9e9eb1;
+  padding-top: 6px;
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-bottom: 6px;
+  background-color: white;
+  border-radius: 4px;
+  font-size: 16px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.button-calendar-icon-css {
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+}
+
+.calendar-text-css {
+  font-size: 17px;
+  font-weight: bold;
+  color: rgba(19,19,65,255);
+  margin-right: 15px;
+}
+
+.search-icon-css {
+  color: rgba(168,154,246,255);
+  font-size: 16px;
+  border: none;
+}
+
+.button-search-icon-css {
+  background-color: rgba(239,236,251,255);
+  border: none;
+  padding-top: 8px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 8px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease; 
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+}
+
+.button-search-icon-css:hover {
+  opacity: 0.6;
+}
+
+.line-css {
+  margin-top: 20px;
+  margin-bottom: 37px;
+  color: rgba(237,237,246,255);
+  border-color: rgba(237,236,247,255);
+  opacity: 0.3;
+}
+
+/* Calendar container dimensions and overflow handling */
+.calendar-css {
+  padding: 17px;
+  background-color: white;
+  border-radius: 11px;
+  border: 1px solid rgba(237, 236, 247, 255);
+  max-width: 100%; /* Ensures it doesn't exceed the parent's width */
+  max-height: 100%; /* Ensures it doesn't exceed the parent's height */
+  overflow: auto; 
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  
+}
+
+.upcoming-events-calendar-css {
+  display: flex;
+  gap: 400px;
+}
+
+.upcoming-events-section {
+  padding-top: 120px;
+  padding-left: 30px;
+  margin-left: -35px; /* Adjust the right margin to create space */
+}
+
+.upcoming-events-text-css {
+  color: rgba(19,19,65,255);
+  margin-top: 60px;
+  margin-bottom: 10px;
+}
+
+.calendar-section {
+  padding-right: 0px;
+  padding-bottom: 22px;
+  margin-left: 20px; /* Adjust the left margin to create space */
+}
+
+/* Styling for each upcoming event */
+.upcoming-event-css {
+  background-color: white; /* Set the background color to white */
+  border-radius: 13px; /* Round the corners */
+  padding: 10px; /* Add some padding for better spacing */
+  margin-bottom: 10px; /* Space between events */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a slight shadow for better visibility */
+  font-size: 10px;
+}
+
+.upcoming-event-paragraph-css {
+  font-size: 10px;
+}
+
+/* Optional: Add styling for the event text if needed */
+.upcoming-event-css h4 {
+  margin: 0; /* Remove default margin */
+  font-size: 15px; /* Adjust font size as needed */
+  font-weight: bold; /* Make the name bold */
+}
+
+.upcoming-event-css p {
+  margin: 5px 0 0; /* Adjust margins for the paragraph */
+  font-size: 12px; /* Adjust font size as needed */
+  color: #333; /* Set text color */
+}
+
+
+/*update here too !!!!!!!!!!*/
+/* Event box styling */
+.event-on-calendar-button-css {
+  background-color: rgba(255, 229, 229, 0.7); /* Light red background for mandatory events */
+  color: rgba(255, 39, 39, 1);
+  font-size: 8px;
+  line-height: 1.2;
+  margin: 2px 0;
+  padding: 2px 4px;
+  border: none;
+  border-radius: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  height: 18px; /* Adjusted height for event boxes */
+  box-sizing: border-box;
+  display: block;
+  text-align: left;
+}
+
+.event-on-calendar-button-css.optional-event {
+  background-color: rgba(229, 249, 253, 0.7); /* Light blue background for optional events */
+  color: rgba(39, 196, 255, 1);
+}
+
+/* Styling for the individual months in year view */
+.react-calendar__year-view__months button {
+  width: 80px; /* Adjust width */
+  height: 80px; /* Adjust height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(240, 239, 253, 1); /* Background color similar to day tiles */
+  border: 1px solid rgba(237, 234, 254, 1); /* Border color and style */
+  border-radius: 8px; /* Rounded corners for consistency */
+  font-size: 16px; /* Font size for months */
+  font-weight: bold; /* Make the month names bold */
+  color: rgba(128, 107, 244, 1); /* Text color */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.react-calendar__year-view__months button:hover {
+  background-color: rgba(214, 209, 245, 255); /* Darker background on hover */
+  box-shadow: 0px 4px 6px rgba(131, 109, 244, 0.2); /* Add shadow for hover effect */
+  cursor: pointer;
+}
+
+/* Styling for the individual years in decade view */
+.react-calendar__decade-view__years button {
+  width: 80px; /* Adjust width */
+  height: 80px; /* Adjust height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(240, 239, 253, 1); /* Background color similar to day tiles */
+  border: 1px solid rgba(237, 234, 254, 1); /* Border color and style */
+  border-radius: 8px; /* Rounded corners for consistency */
+  font-size: 16px; /* Font size for years */
+  font-weight: bold; /* Make the year numbers bold */
+  color: rgba(128, 107, 244, 1); /* Text color */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.react-calendar__decade-view__years button:hover {
+  background-color: rgba(214, 209, 245, 255); /* Darker background on hover */
+  box-shadow: 0px 4px 6px rgba(131, 109, 244, 0.2); /* Add shadow for hover effect */
+  cursor: pointer;
+}
+
+/* Optional: Style the current year or month differently to highlight */
+.react-calendar__year-view__months button:enabled:hover,
+.react-calendar__decade-view__years button:enabled:hover {
+  background-color: rgba(225, 221, 247, 1); /* Lighter background when hovering */
+  color: rgba(39, 196, 255, 1); /* Change text color on hover */
+}
+
+/* Styling the search input */
+.input-search-css {
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid rgba(131, 109, 244, 0.3);
+  background-color: rgba(239, 236, 251, 0.8);
+  font-size: 14px;
+  color: rgba(60, 60, 60, 1);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  outline: none; /* Remove default outline */
+  width: 100%; /* Adjust the width to match the container */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+  flex-grow: 1;
+  
+}
+
+.input-search-css:focus {
+  background-color: white; /* Highlight on focus */
+  border-color: rgba(131, 109, 244, 1);
+}
+
+.search-bar-css {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.input-search-css::placeholder {
+  font-style: italic;
+  color: rgba(0, 0, 0, 0.5); /* Transparent black, adjust as needed */
+  opacity: 0.6;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+}
+
+.mandatory-events-css, .optional-events-css {
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: white; /* Individual white background for each event */
+  padding: 15px; /* Padding inside each event */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Shadow for subtle separation */
+  margin-top: 25px;
+  width: 250px;
+}
+
+.point-time-css-1, .point-time-css-2 {
+  display: flex;
+  align-items: center;
+  gap: -10px;
+}
+
+.icon-and-place-css-1, .icon-and-place-css-2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-icon-date-css-1, .date-icon-date-css-2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.point-icon-1 {
+  color: red;
+  font-size: 6.5px;
+}
+
+.point-icon-2 {
+  color: rgba(39, 196, 255, 1);
+  font-size: 6.5px;
+}
+
+.date-icon-date-css-1,
+.point-time-css-1,
+.date-icon-date-css-2,
+.point-time-css-2 {
+  margin: 0; /* Remove margins */
+  padding: 0; /* Remove padding */
+  color: rgba(159,156,180,255);
+  font-size: 12px;
+}
+
+.point-time-css-1, 
+.point-time-css-2 {
+  margin-top: -20px; /* Reduce space between date and time, adjust this as needed */
+  display: flex;
+  gap: 8px;
+}
+
+.mandatory-events-css, 
+.optional-events-css {
+  margin-bottom: 5px; /* Reduce the spacing between events */
+}
+
+.hour-css-1, 
+.hour-css-2 {
+  margin-left: 5px; /* Adjust as necessary */
+  padding-left: 5px; /* Adjust to reduce space between the icon and the text */
+}
+
+.title-css-1 h4, 
+.title-css-2 h4,
+.descriere-css-1,
+.descriere-css-2 {
+  margin: 0;
+  padding: 0;
+}
+
+.descriere-css-1,
+.descriere-css-2 {
+  margin-top: -8px;
+  font-size: 13px;
+  color: rgba(99,99,144,255);
+  margin-bottom: 8px;
+}
+
+.descriere-css-more {
+  margin: 0;
+  padding: 0;
+  margin-top: -8px;
+  color: rgba(99,99,144,255);
+  margin-bottom: 8px;
+  font-size: 11.5px;
+
+}
+
+.button-show-more, .button-show-less {
+  cursor: pointer;
+}
+
+.event-detail-icon-1 {
+  margin-right: 10px;
+  color: rgba(131, 109, 244, 1);
+  font-size: 12px;
+}
+
+.event-detail-text-1 {
+  font-size: 14px;
+}
+
+.event-detail-text-more { 
+  font-size: 12px;
+}
+
+/* NEW */
+
+.data-ora-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 0px;
+  padding-right: 0px;
+}
+
+.data-div {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.clock-div {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.organizer-css {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.place-css {
+  display: flex;
+  gap: 8px;
+}
+
+.display-more-events-css {
+  display: flex; 
+  gap: 20px;
+  align-items: center;
+  margin-top: 20px;
+  position: relative;
+  background-color: white;
+  padding: 20px;
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  
+}
+
+.vertical-bar-blue, .vertical-bar-red {
+  height: auto; /* Ensure the line spans the full height of its container */
+  width: 4px; /* Set a fixed width for the vertical bar */
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.vertical-bar-blue, .vertical-bar-red {
+  grid-column: 2 / 3; /* Vertical bar in the second column */
+  width: 4px; /* Define vertical bar width */
+  align-self: stretch; /* Stretch to match the height of the container */
+  position: relative; /* Ensure it's positioned within the layout */
+}
+
+
+.vertical-bar-blue {
+  background-color: rgba(39, 196, 255, 1);
+}
+
+.vertical-bar-red {
+  background-color: red;
+}
+
+
+.titlu-org-loc-css {
+  display: flex;
+  flex-direction: column;
+  gap: -10px;
+}
+
+.data-css, .ora-css {
+  color: rgba(159,156,180,255);
+  font-size: 12px;
+}
+
+.more-events-container-css {
+  margin-top: 177px;
+}
+
+.search-results-text-css {
+  margin-left: 15px;
+  margin-bottom: -170px;
+  margin-top: 190px;
+}
+
+.half-of-upcoming-events-css {
+  margin-top: -8px;
+}
+
+
+.utm-logo-css {
+  width: 150px; /* Adjust the size of the logo */
+  height: auto;
+  margin-left: -150px;
+  margin-right: -160px;
+}
+
+.utm-logo-css {
+  cursor: pointer;
+}
