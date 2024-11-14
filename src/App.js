@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import { HalfUpcomingEvents, FilteredEvents, DisplayMoreEvents } from './EventsDisplay';
-import { SearchIcon, CalendarIcon } from './Icons';
+import { SearchIcon, CalendarIcon, StarIcon } from './Icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import './App.css';
@@ -21,12 +21,15 @@ function App() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [expandedEventId, setExpandedEventId] = useState(null);
   const [error, setError] = useState(null);
-  const[logIn, setLogIn] = useState(false);
+  const [favoritedEvents, setFavoritedEvents] = useState(() => {
+    const saved = localStorage.getItem('favoritedEvents');
+    return saved ? JSON.parse(saved) : [];
+  });
 
   useEffect(() => {
     const fetchAndOrganizeEvents = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:3001/events/interval?start_date=2024-09-01&end_date=2025-09-30');
+        const response = await fetch('http://127.0.0.1:5000/events/interval?start_date=2024-09-01&end_date=2025-09-30');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -253,146 +256,177 @@ function App() {
     setExpandedEventId(null);
   };
 
-  const handleLogoClick = () => {
-    setSearchPerformed(false);
-    setSelectedEvent(null);
-    setClickedEvents([]);
-    setFilteredEvents([]);
-    setExpandedEventId(null);
+  const handleFavorite = (event) => {
+    setFavoritedEvents(prev => {
+      const isCurrentlyFavorited = prev.some(fav => fav.id === event.id);
+      if (isCurrentlyFavorited) {
+        return prev.filter(fav => fav.id !== event.id);
+      } else {
+        return [...prev, event];
+      }
+    });
+  };
+
+  const renderUpcomingEvents = () => {
+    return (
+      <div className="upcoming-events-section">
+        <h2 className="upcoming-events-text-css">
+          Upcoming Events
+          {favoritedEvents.length > 0 && (
+            <button
+              className="favorite-button"
+              onClick={() => setClickedEvents(favoritedEvents)}
+            >
+              <StarIcon filled={true} /> 
+            </button>
+          )}
+        </h2>
+        <HalfUpcomingEvents
+          events={events}
+          expandedEventId={expandedEventId}
+          onShowMore={handleShowMore}
+          onHideMore={handleHideMore}
+          onFavorite={handleFavorite}
+          favoritedEvents={favoritedEvents}
+        />
+      </div>
+    );
   };
 
   return (
     <Router>
       <Routes>
-      <Route 
-      path = "/home"
-      element = {
-    <div className='purple-container-css'>
-      <div className="gradient-background">
-        <div className="calendar-and-upc-events-css">
-          <div className="logo-and-events-column">
-            <div className="logo-container">
-              <img 
-                src={logo} 
-                alt="UTM Logo" 
-                className="utm-logo" 
-                onClick={handleLogoClick}
-              />
-            </div>
-            <div className="upcoming-events-or-events-from-calendar">
-              {error && <p className="error-message">{error}</p>}
-              {clickedEvents.length > 0 ? (
-                renderClickedEvents()
-              ) : (
-                <>
-                  {!searchPerformed && !selectedEvent && (
-                    <div className="upcoming-events-section">
-                      <h2 className='upcoming-events-text-css'>Upcoming Events</h2>
-                      <HalfUpcomingEvents events={events} expandedEventId={expandedEventId} onShowMore={handleShowMore} onHideMore={handleHideMore} />
-                    </div>
-                  )}
-                  {searchPerformed && filteredEvents.length === 1 && (
-                    <>
-                      <h2 className='search-results-text-css'>Search results</h2>
-                      <FilteredEvents 
-                        key={filteredEvents[0].id}
-                        event={filteredEvents[0]} 
-                        onBack={handleBackClick}
-                      />
-                    </>
-                  )}
-                  {searchPerformed && filteredEvents.length > 1 && (
-                    <>
-                      <h2 className='search-results-text-css'>Search results</h2>
-                      <div className='more-events-container-css'>
-                        {filteredEvents.map((event, index) => (
-                          <DisplayMoreEvents 
-                            key={index}
-                            event={event}
+        <Route
+          path="/home"
+          element={
+            <div className="purple-container-css">
+              <div className="gradient-background">
+                <div className="calendar-and-upc-events-css">
+                  <div className="upcoming-events-or-events-from-calendar">
+                    {error && <p className="error-message">{error}</p>}
+                    {clickedEvents.length > 0 ? (
+                      renderClickedEvents()
+                    ) : (
+                      <>
+                        {!searchPerformed && !selectedEvent && (
+                          renderUpcomingEvents()
+                        )}
+                        {searchPerformed && filteredEvents.length === 1 && (
+                          <>
+                            <h2 className="search-results-text-css">
+                              Search results
+                            </h2>
+                            <FilteredEvents
+                              key={filteredEvents[0].id}
+                              event={filteredEvents[0]}
+                              onBack={handleBackClick}
+                            />
+                          </>
+                        )}
+                        {searchPerformed && filteredEvents.length > 1 && (
+                          <>
+                            <h2 className="search-results-text-css">
+                              Search results
+                            </h2>
+                            <div className="more-events-container-css">
+                              {filteredEvents.map((event, index) => (
+                                <DisplayMoreEvents
+                                  key={index}
+                                  event={event}
+                                  onFavorite={handleFavorite}
+                                  isFavorited={favoritedEvents.includes(event)}
+                                />
+                              ))}
+                            </div>
+                            <div className="back-button-container">
+                              <button
+                                onClick={handleBackClick}
+                                className="back-button"
+                              >
+                                <FontAwesomeIcon icon={faArrowLeft} /> Back
+                              </button>
+                            </div>
+                          </>
+                        )}
+                        {searchPerformed && filteredEvents.length === 0 && (
+                          <p className="no-events-found-css">No events found.</p>
+                        )}
+                        {selectedEvent && (
+                          <FilteredEvents
+                            event={selectedEvent}
+                            onBack={handleBackClick}
+                            onFavorite={handleFavorite}
+                            isFavorited={favoritedEvents.includes(selectedEvent)}
                           />
-                        ))}
+                        )}
+                      </>
+                    )}
+                  </div>
+                  <div className="calendar-section">
+                    <div className="search-icon-text-css">
+                      <div className="logo-icon-css"></div>
+                      <img
+                        src={logo}
+                        alt="UTM Logo"
+                        className="utm-logo-css"
+                        onClick={() => {
+                          setSelectedEvent(null);
+                          setSearchPerformed(false);
+                          setClickedEvents([]);
+                          setFilteredEvents([]);
+                          setExpandedEventId(null);
+                        }}
+                      />
+                      <div className="icon-calendar-text-css">
+                        <CalendarIcon
+                          onClick={() => {
+                            setSelectedEvent(null);
+                            setSearchPerformed(false);
+                            setClickedEvents([]);
+                            setFilteredEvents([]);
+                            setExpandedEventId(null);
+                          }}
+                        />
+                        <div className="calendar-text-css">Calendar</div>
                       </div>
-                      <div className="back-button-container">
-                        <button onClick={handleBackClick} className="back-button">
-                          <FontAwesomeIcon icon={faArrowLeft} /> Back
+                      <div className="search-bar-css">
+                        <input
+                          value={inputValue}
+                          onChange={(e) => setInputValue(e.target.value)}
+                          className="input-search-css"
+                          placeholder="Search for event"
+                        />
+                        <button
+                          className="button-search-icon-css"
+                          onClick={handleSearchClick}
+                        >
+                          <SearchIcon />
                         </button>
                       </div>
-                    </>
-                  )}
-                  {searchPerformed && filteredEvents.length === 0 && (
-                    <p className='no-events-found-css'>No events found.</p>
-                  )}
-                  {selectedEvent && (
-                    <FilteredEvents 
-                      event={selectedEvent}
-                      onBack={handleBackClick}
-                    />
-                  )}
-                </>
-              )}
-            </div>
-          </div>
-          <div className="calendar-section">
-            <div className="search-icon-text-css">
-            <div className="logo-icon-css"> 
-            </div>
-            
-            <img 
-  src={logo} 
-  alt="UTM Logo" 
-  className="utm-logo-css" 
-  onClick={() => {
-    setSelectedEvent(null);
-    setSearchPerformed(false);
-    setClickedEvents([]);
-    setFilteredEvents([]);
-    setExpandedEventId(null);
-  }}
-/>
-
-              <div className="icon-calendar-text-css">
-                <CalendarIcon 
-                  onClick={() => {
-                    setSelectedEvent(null);
-                    setSearchPerformed(false);
-                    setClickedEvents([]);
-                    setFilteredEvents([]);
-                    setExpandedEventId(null);
-                  }} 
-                />
-                <div className='calendar-text-css'>Calendar</div>
-              </div>
-              <div className='search-bar-css'>
-                <input 
-                  value={inputValue} 
-                  onChange={(e) => setInputValue(e.target.value)} 
-                  className='input-search-css' 
-                  placeholder="Search for event"
-                />
-                <button className='button-search-icon-css' onClick={handleSearchClick}>
-                  <SearchIcon />
-                </button>
+                    </div>
+                    <hr className="line-css" />
+                    <div className="calendar-css">
+                      <Calendar
+                        tileContent={tileContent}
+                        minDetail="year"
+                        maxDetail="month"
+                        navigationLabel={({ date }) =>
+                          `${date.toLocaleString('default', {
+                            month: 'long',
+                          })} ${date.getFullYear()}`
+                        }
+                        onClickDay={() => setSelectedEvent(null)}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <hr className='line-css' />
-            <div className='calendar-css'>
-              <Calendar
-                tileContent={tileContent}
-                minDetail="year"
-                maxDetail="month"
-                navigationLabel={({ date }) => `${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`}
-                onClickDay={() => setSelectedEvent(null)}
-              />                     
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>}
-    />
+          }
+        />
 
-    <Route path="/" element={<LoginPage />} />
-    
-    </Routes>
+        <Route path="/" element={<LoginPage />} />
+      </Routes>
     </Router>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import './Login.css';
+import { useNavigate } from "react-router-dom";
+
 
 export const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -23,8 +24,7 @@ export const LoginPage = () => {
 
             if (response.ok) {
                 alert("Login successful");
-                localStorage.setItem('isLoggedIn', 'true');
-                navigate('/home');
+                navigate("/home"); 
             } else {
                 alert(data.message || "Login failed");
             }
