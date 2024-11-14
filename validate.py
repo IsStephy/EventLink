@@ -57,8 +57,8 @@ def validate_event_data(data):
 
 
     tip = data.get('tip', '')  
-    if tip.strip().lower() not in ['obligatoriu', 'obtional']:
-        errors.append("Tipul trebuie să fie 'obligatoriu' sau 'obtional'")
+    if tip.strip().lower() not in ['obligatoriu', 'optional']:
+        errors.append("Tipul trebuie să fie 'obligatoriu' sau 'optional'")
 
     if errors:
         return False, errors

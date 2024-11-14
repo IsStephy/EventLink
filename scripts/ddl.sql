@@ -24,3 +24,11 @@ CREATE TABLE organizator (
 	nume VARCHAR NOT NULL,
 	domeniu VARCHAR
 );
+
+CREATE TABLE utilizator (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	email VARCHAR NOT NULL,
+	parola VARCHAR NOT NULL,
+	statut TEXT CHECK(statut IN ('administrator', 'utilizator')) NOT NULL,
+	liked_eveniments TEXT
+);

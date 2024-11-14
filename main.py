@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import sqlite3
 import os
 from flask_cors import CORS
+import hashlib
 
 app = Flask(__name__)
 current_directory = os.path.dirname(os.path.abspath(__file__))
@@ -25,7 +26,7 @@ def admin():
 #example http://127.0.0.1:5000/add?titlu=Event1&descriere=Description1&data=2024-09-15&ora=14:00:00&tip=conference&raion=Raion1&oras=Oras1&strada=Strada1&nume=OrganizerName&domeniu=IT
 @app.route('/events/add', methods=['POST', 'OPTIONS'])
 def add_event():
-    data = request.get_json()  # Get JSON data from the request body
+    data = request.get_json()  
 
     Titlu = data.get('titlu')
     Descriere = data.get('descriere')
@@ -82,7 +83,6 @@ def add_event():
 
     finally:
         conn.close()
-    # r.headers["Access-Control-Allow-Origin"] = '*'
     return jsonify({
         'status': 'success',
         'message': 'Event added successfully',
@@ -100,6 +100,203 @@ def add_event():
         }
     }), 200
 
+@app.route('/user/register', methods=['POST'])
+def add_user():
+    data = request.get_json()
+
+    email = data.get('email')
+    parola = data.get('parola')
+    statut = data.get('statut')
+    liked_events = data.get('liked_events', [])
+
+    if not (email and parola and statut):
+        return jsonify({'status': 'error', 'message': 'Required fields are missing'}), 400
+
+    hashed_password = hashlib.sha256(parola.encode()).hexdigest()
+
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # Check if the email already exists
+        cur.execute("SELECT id FROM utilizator WHERE email = ?", (email,))
+        if cur.fetchone():
+            return jsonify({'status': 'error', 'message': 'Email already exists'}), 400
+
+        # Insert the new user
+        cur.execute(
+            "INSERT INTO utilizator (email, parola, statut, liked) VALUES (?, ?, ?, ?)",
+            (email, hashed_password, statut, json.dumps(liked_events))
+        )
+        conn.commit()
+
+    except sqlite3.Error as e:
+        conn.rollback()
+        return jsonify({'status': 'error', 'message': 'Failed to add user', 'error': str(e)}), 500
+
+    finally:
+        conn.close()
+
+    return jsonify({'status': 'success', 'message': 'User added successfully'}), 200
+
+import hashlib
+
+# Function to verify the password and return user status and liked events
+@app.route('/user/authentication', methods=['POST'])
+def authenticate_user():
+    data = request.get_json()
+
+    email = data.get('email')
+    password = data.get('password')
+
+    if not email or not password:
+        return jsonify({'status': 'error', 'message': 'Email and password are required'}), 400
+
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        cur.execute("SELECT parola, statut, liked FROM utilizator WHERE email = ?", (email,))
+        user = cur.fetchone()
+
+        if user is None:
+            return jsonify({'status': 'error', 'message': 'User not found'}), 404
+
+        password_hash = hashlib.sha256(password.encode()).hexdigest()
+        stored_password_hash = user[0]
+
+        if password_hash != stored_password_hash:
+            return jsonify({'status': 'error', 'message': 'Invalid password'}), 403
+
+        return jsonify({
+            'status': 'success',
+            'data': {
+                'user_status': user[1],
+                'liked_events': json.loads(user[2])  # Convert liked events from JSON string to Python list
+            }
+        }), 200
+
+    except sqlite3.Error as e:
+        return jsonify({'status': 'error', 'message': 'Database error', 'error': str(e)}), 500
+
+    finally:
+        conn.close()
+
+
+import json
+
+# Function to add a liked event to the liked_events field for a user
+@app.route('/user/like_event', methods=['POST'])
+def like_event():
+    data = request.get_json()
+
+    # Extract user ID and event ID from the request
+    user_id = data.get('user_id')
+    id_eveniment = data.get('id_eveniment')
+
+    if not user_id or not id_eveniment:
+        return jsonify({'status': 'error', 'message': 'User ID and event ID are required'}), 400
+
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        cur.execute("SELECT liked_events FROM users WHERE id = ?", (user_id,))
+        user = cur.fetchone()
+
+        if user is None:
+            return jsonify({'status': 'error', 'message': 'User not found'}), 404
+
+        liked_events = json.loads(user['liked_events']) if user['liked_events'] else {'data': {}}
+
+        next_id = max(map(int, liked_events['data'].keys()), default=0) + 1
+
+        liked_events['data'][str(next_id)] = id_eveniment
+
+        cur.execute("UPDATE users SET liked = ? WHERE id = ?", (json.dumps(liked_events), user_id))
+        conn.commit()
+
+        return jsonify({
+            'status': 'success',
+            'message': 'Event liked successfully',
+            'liked_events': liked_events
+        }), 200
+
+    except sqlite3.Error as e:
+        return jsonify({'status': 'error', 'message': 'Database error', 'error': str(e)}), 500
+
+    finally:
+        conn.close()
+
+import json
+from flask import jsonify, request
+
+# Function to retrieve user profile and liked event details
+@app.route('/user/<int:id>', methods=['GET'])
+def get_user_profile(id):
+    if not id:
+        return jsonify({'status': 'error', 'message': 'User ID is required'}), 400
+
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        cur.execute("SELECT email, liked_events FROM users WHERE id = ?", (id,))
+        user = cur.fetchone()
+
+        if user is None:
+            return jsonify({'status': 'error', 'message': 'User not found'}), 404
+
+        email, liked_events_json = user['email'], user['liked_events']
+
+        liked_events = json.loads(liked_events_json)['data'] if liked_events_json else {}
+        event_ids = list(liked_events.values())
+
+        liked_event_details = []
+        if event_ids:
+            cur.execute(f"""
+                SELECT id, titlu, descriere, data, ora, tip 
+                FROM eveniment 
+                WHERE id IN ({','.join(['?'] * len(event_ids))})
+            """, event_ids)
+            liked_event_details = cur.fetchall()
+
+        return jsonify({
+            'status': 'success',
+            'profile': {
+                'email': email,
+                'liked_events': liked_event_details
+            }
+        }), 200
+
+    except sqlite3.Error as e:
+        return jsonify({'status': 'error', 'message': 'Database error', 'error': str(e)}), 500
+
+    finally:
+        conn.close()
+
+@app.route('/user/delete/<int:id>', methods=['DELETE'])
+def delete_user(id):
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        cur.execute("SELECT * FROM users WHERE id = ?", (id,))
+        user = cur.fetchone()
+
+        if user is None:
+            return jsonify({'status': 'error', 'message': 'User not found'}), 404
+
+        cur.execute("DELETE FROM users WHERE id = ?", (id,))
+        conn.commit()
+
+        return jsonify({'status': 'success', 'message': 'User deleted successfully'}), 200
+
+    except sqlite3.Error as e:
+        return jsonify({'status': 'error', 'message': 'Database error', 'error': str(e)}), 500
+
+    finally:
+        conn.close()
 
 #sent to frontend data about the event by id
 #example http://127.0.0.1:5000/events/2
@@ -276,9 +473,7 @@ def update_event(id):
         conn = get_db_connection()
         with conn:
             cur = conn.cursor()
-
-            # Extract data from query parameters
-
+            
             Titlu = data.get('titlu')
             Descriere = data.get('descriere')
             Data = data.get('data')
@@ -289,31 +484,90 @@ def update_event(id):
             Nume = data.get('nume')
             Domeniu = data.get('domeniu')
 
-            # does not need validation because if any parameters are empty the function COALECE does not modify the value
-            # Check if location needs updating
             if Raion or Oras or Strada:
-                cur.execute('''
-                    UPDATE loc
-                    SET raion = COALESCE(?, raion), 
-                        oras = COALESCE(?, oras), 
-                        strada = COALESCE(?, strada)
-                    WHERE id = (
-                        SELECT loc_id FROM eveniment WHERE id = ?
-                    )
-                ''', (Raion, Oras, Strada, id))
 
-            # Check if organizer needs updating
+                cur.execute('SELECT loc_id FROM eveniment WHERE id = ?', (id,))
+                loc_id = cur.fetchone()
+
+                if loc_id:
+                    loc_id = loc_id[0]
+
+                    cur.execute('SELECT raion, oras, strada FROM loc WHERE id = ?', (loc_id,))
+                    existing_loc = cur.fetchone()
+
+                    if existing_loc:
+                        existing_raion, existing_oras, existing_strada = existing_loc
+
+
+                        if (existing_raion != Raion) or (existing_oras != Oras) or (existing_strada != Strada):
+                            cur.execute('SELECT id FROM loc WHERE raion = ? AND oras = ? AND strada = ?', 
+                                        (Raion, Oras, Strada))
+                            loc_exists = cur.fetchone()
+
+                            if loc_exists:
+                                new_loc_id = loc_exists[0]
+                            else:
+                                cur.execute('''
+                                    INSERT INTO loc (raion, oras, strada)
+                                    VALUES (?, ?, ?)
+                                ''', (Raion or existing_raion, Oras or existing_oras, Strada or existing_strada))
+                                
+                                new_loc_id = cur.lastrowid
+
+                            cur.execute('''
+                                UPDATE eveniment
+                                SET loc_id = ?
+                                WHERE id = ?
+                            ''', (new_loc_id, id))
+                        else:
+                            cur.execute('''
+                                UPDATE loc
+                                SET raion = COALESCE(?, raion), 
+                                    oras = COALESCE(?, oras), 
+                                    strada = COALESCE(?, strada)
+                                WHERE id = ?
+                            ''', (Raion, Oras, Strada, loc_id))
+
             if Nume or Domeniu:
-                cur.execute('''
-                    UPDATE organizator
-                    SET nume = COALESCE(?, nume), 
-                        domeniu = COALESCE(?, domeniu)
-                    WHERE id = (
-                        SELECT organizator_id FROM eveniment WHERE id = ?
-                    )
-                ''', (Nume, Domeniu, id))
+                cur.execute('SELECT organizator_id FROM eveniment WHERE id = ?', (id,))
+                organizator_id = cur.fetchone()
+                if organizator_id:
+                    organizator_id = organizator_id[0]
 
-            # Update event details
+                    cur.execute('SELECT nume, domeniu FROM organizator WHERE id = ?', (organizator_id,))
+                    existing_org = cur.fetchone()
+
+                    if existing_org:
+                        existing_nume, existing_domeniu = existing_org
+
+                        if (existing_nume != Nume) or (existing_domeniu != Domeniu):
+                            cur.execute('SELECT id FROM organizator WHERE nume = ? AND domeniu = ?', 
+                                        (Nume, Domeniu))
+                            org_exists = cur.fetchone()
+
+                            if org_exists:
+                                new_org_id = org_exists[0]
+                            else:
+                                cur.execute('''
+                                    INSERT INTO organizator (nume, domeniu)
+                                    VALUES (?, ?)
+                                ''', (Nume or existing_nume, Domeniu or existing_domeniu))
+                                
+                                new_org_id = cur.lastrowid
+
+                            cur.execute('''
+                                UPDATE eveniment
+                                SET organizator_id = ?
+                                WHERE id = ?
+                            ''', (new_org_id, id))
+                        else:
+                            cur.execute('''
+                                UPDATE organizator
+                                SET nume = COALESCE(?, nume), 
+                                    domeniu = COALESCE(?, domeniu)
+                                WHERE id = ?
+                            ''', (Nume, Domeniu, organizator_id))
+
             cur.execute('''
                 UPDATE eveniment
                 SET titlu = COALESCE(?, titlu),
