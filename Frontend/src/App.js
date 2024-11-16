@@ -21,10 +21,8 @@ function App() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [expandedEventId, setExpandedEventId] = useState(null);
   const [error, setError] = useState(null);
-  const [favoritedEvents, setFavoritedEvents] = useState(() => {
-    const saved = localStorage.getItem('favoritedEvents');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [userEmail, setUserEmail] = useState(localStorage.getItem('userEmail')); // Get from login
+  const [favoritedEvents, setFavoritedEvents] = useState([]);
 
   useEffect(() => {
     const fetchAndOrganizeEvents = async () => {
@@ -122,8 +120,28 @@ function App() {
       }
     };
 
+    const fetchFavorites = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:5000/favorites');
+        if (!response.ok) throw new Error('Failed to fetch favorites');
+        const data = await response.json();
+        
+        // Merge backend favorites with localStorage favorites
+        setFavoritedEvents(data);
+        localStorage.setItem('favoritedEvents', JSON.stringify(data));
+      } catch (error) {
+        console.error('Error fetching favorites:', error);
+        // If backend fails, fallback to localStorage
+        const saved = localStorage.getItem('favoritedEvents');
+        if (saved) {
+          setFavoritedEvents(JSON.parse(saved));
+        }
+      }
+    };
+
     fetchAndOrganizeEvents();
-  }, []);
+    fetchFavorites();
+  }, [userEmail]);
 
   const handleSearchClick = () => {
     const searchQuery = inputValue.toLowerCase();
@@ -256,15 +274,36 @@ function App() {
     setExpandedEventId(null);
   };
 
-  const handleFavorite = (event) => {
-    setFavoritedEvents(prev => {
-      const isCurrentlyFavorited = prev.some(fav => fav.id === event.id);
-      if (isCurrentlyFavorited) {
-        return prev.filter(fav => fav.id !== event.id);
-      } else {
-        return [...prev, event];
-      }
-    });
+  const handleFavorite = async (event) => {
+    try {
+      // Call backend to persist the change
+      const response = await fetch('http://127.0.0.1:5000/favorites/toggle', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          event_id: event.id
+        })
+      });
+  
+      if (!response.ok) throw new Error('Failed to toggle favorite');
+  
+      // Update local state (keep your existing localStorage logic)
+      setFavoritedEvents(prev => {
+        const isCurrentlyFavorited = prev.some(fav => fav.id === event.id);
+        const newFavorites = isCurrentlyFavorited
+          ? prev.filter(fav => fav.id !== event.id)
+          : [...prev, event];
+        
+        // Update localStorage
+        localStorage.setItem('favoritedEvents', JSON.stringify(newFavorites));
+        return newFavorites;
+      });
+  
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+    }
   };
 
   const renderUpcomingEvents = () => {
@@ -273,12 +312,12 @@ function App() {
         <h2 className="upcoming-events-text-css">
           Upcoming Events
           {favoritedEvents.length > 0 && (
-            <button
-              className="favorite-button"
-              onClick={() => setClickedEvents(favoritedEvents)}
-            >
-              <StarIcon filled={true} /> 
-            </button>
+          <button
+            className="upcoming-events-star"
+            onClick={() => setClickedEvents(favoritedEvents)}
+          >
+            <StarIcon filled={true} />
+          </button>
           )}
         </h2>
         <HalfUpcomingEvents

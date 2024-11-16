@@ -1,6 +1,20 @@
 /* src/App.css */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
+.upcoming-events-star {
+  top: 4px;
+  left: 21px;
+  position: relative;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.upcoming-events-star:hover {
+  transform: scale(1.1);
+}
+
 
 .favorite-button {
   background: transparent;
@@ -8,6 +22,10 @@
   padding: 4px;
   cursor: pointer;
   transition: transform 0.2s;
+  margin-top: 10px;
+  margin-left: 220px;
+  position: absolute;
+
 }
 
 .favorite-button:hover {
@@ -31,17 +49,6 @@
   cursor: pointer;
   transition: background-color 0.2s;
   background: #f0f0f0;
-}
-
-
-
-
-
-.event-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0px;
-  padding: 0px;
 }
 
 .helpful-p-css {
