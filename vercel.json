@@ -8,7 +8,7 @@
         }
       },
       {
-        "src": "Backend/api/index.py",
+        "src": "Backend/api/*.py",
         "use": "@vercel/python"
       }
     ],
