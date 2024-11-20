@@ -23,8 +23,9 @@ export const LoginPage = () => {
             const data = await response.json();
 
             if (response.ok) {
-                alert("Login successful");
                 navigate("/home"); 
+                alert("Login successful");
+                
             } else {
                 alert(data.message || "Login failed");
             }

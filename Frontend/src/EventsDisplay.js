@@ -217,9 +217,16 @@ export const FilteredEvents = ({ event, onBack, onFavorite, favoritedEvents = []
   );
 };
 
-export const DisplayMoreEvents = ({ event }) => {
+export const DisplayMoreEvents = ({ event, onFavorite, favoritedEvents = [] }) => {
+  if (!event || !event.place) {
+    return <div className="error">Event details are missing or incomplete.</div>;
+  }
+
   const date = new Date(event.data);
   const formattedDate = `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+
+  // Ensure favoritedEvents is always defined as an array
+  const isFavorited = favoritedEvents.some((fav) => fav.id === event.id);
 
   return (
     <div className="display-more-events-css">
@@ -234,15 +241,35 @@ export const DisplayMoreEvents = ({ event }) => {
           <div className="date-icon-date-css-1">
             <ClockIcon />
           </div>
-          <div className="ora-css"> {event.ora}</div>
+          <div className="ora-css">{event.ora}</div>
         </div>
       </div>
       {event.tip === 'Obligatoriu' ? (
         <div className="vertical-bar-red">
+          <div 
+            className="star-more-items" 
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent click propagation
+              onFavorite(event);   // Trigger the favorite toggle function
+            }}
+            aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+          >
+            <StarIcon filled={isFavorited} />
+          </div>
           <hr />
         </div>
       ) : (
         <div className="vertical-bar-blue">
+          <div 
+            className="star-more-items" 
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent click propagation
+              onFavorite(event);   // Trigger the favorite toggle function
+            }}
+            aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+          >
+            <StarIcon filled={isFavorited} />
+          </div>
           <hr />
         </div>
       )}
@@ -263,6 +290,85 @@ export const DisplayMoreEvents = ({ event }) => {
             {event.place.oras}, {event.place.strada}
           </div>
         </div>
+      </div>
+    </div>
+  );
+};
+
+DisplayMoreEvents.defaultProps = {
+  favoritedEvents: [],
+};
+
+export const DisplayFavEvents = ({ favoritedEvents, onBack }) => {
+  if (favoritedEvents.length === 0) {
+    return <p className="no-favorites-text">No favorite events found.</p>;
+  }
+
+  return (
+    <div className="favorite-events-container">
+      <h2 className="favorite-events-title">Favorite Events</h2>
+      <div className="more-events-container-css">
+        {favoritedEvents.map((event) => (
+          <div key={event.id} className="display-more-events-css">
+            {/* Date and Time */}
+            <div className="data-ora-div">
+              <div className="data-div">
+                <div className="date-icon-date-css-1">
+                  <DateIcon />
+                </div>
+                <div className="data-css">
+                  {new Date(event.data).toLocaleDateString('ro-RO')}
+                </div>
+              </div>
+              <div className="clock-div">
+                <div className="date-icon-date-css-1">
+                  <ClockIcon />
+                </div>
+                <div className="ora-css">{event.ora}</div>
+              </div>
+            </div>
+
+            {/* Type Indicator */}
+            {event.tip === 'Obligatoriu' ? (
+              <div className="vertical-bar-red">
+                <hr />
+              </div>
+            ) : (
+              <div className="vertical-bar-blue">
+                <hr />
+              </div>
+            )}
+
+            {/* Event Details */}
+            <div className="titlu-org-loc-css">
+              <h4 className="tile-css-more">{event.titlu}</h4>
+              <p className="descriere-css-more">{event.descriere}</p>
+              <div className="organizer-css">
+                <div className="event-detail-icon-more">
+                  <OrganizerIcon />
+                </div>
+                <div className="event-detail-text-more">
+                  {event.organizer.nume}
+                </div>
+              </div>
+              <div className="place-css">
+                <div className="event-detail-icon-more">
+                  <PlaceIcon />
+                </div>
+                <div className="event-detail-text-more">
+                  {event.place.oras}, {event.place.strada}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Back Button */}
+      <div className="back-button-container">
+        <button onClick={onBack} className="back-button">
+          Back
+        </button>
       </div>
     </div>
   );
