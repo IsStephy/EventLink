@@ -1,6 +1,6 @@
 import flask
 from flask import Flask, request, jsonify, abort
-from validate import validate_event_data
+#from ..validate import validate_event_data
 from datetime import datetime, timedelta
 import sqlite3
 import os
@@ -9,7 +9,7 @@ import hashlib
 
 app = Flask(__name__)
 current_directory = os.path.dirname(os.path.abspath(__file__))
-database_path = os.path.join(current_directory, 'EventLink')
+database_path = os.path.join(current_directory, '../EventLink')
 # CORS(app, resources={r'/*': {'origins': config['ORIGINS']}}, supports_credentials=True)
 CORS(app, resources={r"*": {"origins": "*"}}, support_credentials=True)
 
@@ -17,6 +17,70 @@ def get_db_connection():
     conn = sqlite3.connect(database_path, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     return conn
+
+def validate_event_data(data):
+    errors = []
+    
+    titlu = data.get('titlu', '')
+    if len(titlu) < 4 or len(titlu) > 100:
+        errors.append("Titlu trebuie să conțină între 4-100 caractere.")
+
+    descriere = data.get('descriere', '')
+    if not descriere.strip():
+        errors.append("Completați Descrierea.")
+    elif len(descriere) > 500:
+        errors.append("Descrierea nu poate depăși 500 de caractere.")
+
+    data_str = data.get('data', '')
+    try:
+        event_date = datetime.strptime(data_str, '%Y-%m-%d')
+        if event_date <= datetime.now():
+            errors.append("Data trebuie prezentată in viitor.")
+    except ValueError:
+        errors.append("Formatul datelor este greșit, urmează formatul YYYY-MM-DD.")
+
+    ora_str = data.get('ora', '')
+    if ora_str:
+        try:
+            start_time_str, end_time_str = ora_str.split(' - ')
+            start_time = datetime.strptime(start_time_str, '%H:%M:%S').time()
+            end_time = datetime.strptime(end_time_str, '%H:%M:%S').time()
+            if start_time >= end_time:
+                errors.append("Timpul de start trebuie să fie mai devreme decât cel final")
+        except ValueError:
+            errors.append("Ora trebuie să fie de format 'HH:MM:SS - HH:MM:SS'.")
+    else:
+        errors.append("Ora este necesară, și trebuie să fie de formatul 'HH:MM:SS - HH:MM:SS'.")
+
+    for field in ['raion', 'oras', 'strada']:
+        if len(data.get(field, '')) < 4:
+            errors.append(f"{field.capitalize()} Denumirea trebuie sa conțină cel puțin 4 caractere")
+        elif len(data.get(field, '')) > 20:
+            errors.append(f"{field.capitalize()} Denumirea nu poate depăși 20 de caractere.")
+
+    nume = data.get('nume', '')
+    if not nume.strip():
+        errors.append("Indicați Numele Organizatorului.")
+    elif len(nume) > 30:
+        errors.append("Numele organizatorului nu poate depăși 30 de caractere.")
+
+
+    domeniu = data.get('domeniu', '')
+    if not domeniu.strip():
+        errors.append("Indicați Domeniul Evenimentului.")
+    elif len(nume) > 20:
+        errors.append("Domeniul nu poate depăși 50 de caractere.")
+
+
+
+    tip = data.get('tip', '')  
+    if tip.strip().lower() not in ['obligatoriu', 'optional']:
+        errors.append("Tipul trebuie să fie 'obligatoriu' sau 'optional'")
+
+    if errors:
+        return False, errors
+    return True, "Validarea sa realizat cu success."
+
 
 @app.route('/')
 def admin():
@@ -611,5 +675,5 @@ def delete_event(id):
     
     return jsonify({'status': 'success', 'message': 'Event deleted successfully'}), 200
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=3001, debug=True)
+#if __name__ == '__main__':
+ #   app.run(host='0.0.0.0', port=3001, debug=True)
