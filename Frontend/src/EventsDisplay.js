@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faMapMarkerAlt, faChevronDown,faChevronUp, faCalendarDay, faClock, faTag, faArrowLeft} from '@fortawesome/free-solid-svg-icons';
+import { faUser, faMapMarkerAlt, faCalendarDay, faClock, faTag, faArrowLeft} from '@fortawesome/free-solid-svg-icons';
 import { StarIcon, DateIcon, PointIcon, ShowMoreIcon, ShowLessButton, VerticalBar, ClockIcon, PlaceIcon, OrganizerIcon} from './Icons';
 
 export const HalfUpcomingEvents = ({ events, expandedEventId, onShowMore, onHideMore, onFavorite, favoritedEvents }) => {

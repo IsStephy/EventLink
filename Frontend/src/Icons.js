@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faMapMarkerAlt, faChevronDown, faChevronUp, faCalendarDay, faClock, faTag, faSearch, faCalendar, faCircle,  faGripLinesVertical} from '@fortawesome/free-solid-svg-icons';
+import { faUser, faMapMarkerAlt, faChevronDown, faChevronUp, faCalendarDay, faClock, faSearch, faCalendar, faCircle,  faGripLinesVertical} from '@fortawesome/free-solid-svg-icons';
 
 export const SearchIcon = () => (
   <div>
