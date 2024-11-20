@@ -1,4 +1,3 @@
-import flask
 from flask import Flask, request, jsonify, abort
 #from ..validate import validate_event_data
 from datetime import datetime, timedelta
