@@ -21,7 +21,7 @@ function App() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [expandedEventId, setExpandedEventId] = useState(null);
   const [error, setError] = useState(null);
-  const [userEmail, setUserEmail] = useState(localStorage.getItem('userEmail')); // Get from login
+  const [userEmail] = useState(localStorage.getItem('userEmail')); // Get from login
   const [favoritedEvents, setFavoritedEvents] = useState([]);
   const [isViewingFavorites, setIsViewingFavorites] = useState(false);
 

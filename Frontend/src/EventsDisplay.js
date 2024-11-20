@@ -1,7 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faMapMarkerAlt, faCalendarDay, faClock, faTag, faArrowLeft} from '@fortawesome/free-solid-svg-icons';
-import { StarIcon, DateIcon, PointIcon, ShowMoreIcon, ShowLessButton, VerticalBar, ClockIcon, PlaceIcon, OrganizerIcon} from './Icons';
+import { StarIcon, DateIcon, PointIcon, ShowMoreIcon, ShowLessButton, ClockIcon, PlaceIcon, OrganizerIcon} from './Icons';
 
 export const HalfUpcomingEvents = ({ events, expandedEventId, onShowMore, onHideMore, onFavorite, favoritedEvents }) => {
   const lastEvents = events.slice(-2); // Get the last two events to display.
