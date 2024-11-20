@@ -674,5 +674,10 @@ def delete_event(id):
     
     return jsonify({'status': 'success', 'message': 'Event deleted successfully'}), 200
 
-if __name__ == '__main__':
-   app.run(host='0.0.0.0', port=3001, debug=True)
+
+def handler(req, res):
+    with app.app_context():
+        return app(req, res)
+    
+#if __name__ == '__main__':
+#   app.run(host='0.0.0.0', port=3001, debug=True)
