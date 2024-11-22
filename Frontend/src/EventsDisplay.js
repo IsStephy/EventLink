@@ -4,7 +4,7 @@ import { faUser, faMapMarkerAlt, faChevronDown,faChevronUp, faCalendarDay, faClo
 import { StarIcon, DateIcon, PointIcon, ShowMoreIcon, ShowLessButton, VerticalBar, ClockIcon, PlaceIcon, OrganizerIcon} from './Icons';
 
 export const HalfUpcomingEvents = ({ events, expandedEventId, onShowMore, onHideMore, onFavorite, favoritedEvents }) => {
-  const lastEvents = events.slice(-2); // Get the last two events to display.
+  const lastEvents = events.slice(-2); 
   const arrayEventTypes = lastEvents.map((event) => event.tip === 'Obligatoriu');
 
   return (
@@ -225,7 +225,6 @@ export const DisplayMoreEvents = ({ event, onFavorite, favoritedEvents = [] }) =
   const date = new Date(event.data);
   const formattedDate = `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
 
-  // Ensure favoritedEvents is always defined as an array
   const isFavorited = favoritedEvents.some((fav) => fav.id === event.id);
 
   return (
@@ -300,7 +299,7 @@ DisplayMoreEvents.defaultProps = {
 };
 
 export const DisplayFavEvents = ({ favoritedEvents, onBack }) => {
-  if (favoritedEvents.length === 0) {
+  if (!Array.isArray(favoritedEvents) || favoritedEvents.length === 0) {
     return <p className="no-favorites-text">No favorite events found.</p>;
   }
 
@@ -308,60 +307,70 @@ export const DisplayFavEvents = ({ favoritedEvents, onBack }) => {
     <div className="favorite-events-container">
       <h2 className="favorite-events-title">Favorite Events</h2>
       <div className="more-events-container-css">
-        {favoritedEvents.map((event) => (
-          <div key={event.id} className="display-more-events-css">
-            {/* Date and Time */}
-            <div className="data-ora-div">
-              <div className="data-div">
-                <div className="date-icon-date-css-1">
-                  <DateIcon />
-                </div>
-                <div className="data-css">
-                  {new Date(event.data).toLocaleDateString('ro-RO')}
-                </div>
-              </div>
-              <div className="clock-div">
-                <div className="date-icon-date-css-1">
-                  <ClockIcon />
-                </div>
-                <div className="ora-css">{event.ora}</div>
-              </div>
-            </div>
+        {favoritedEvents.map((event, index) => {
+          if (!event || !event.titlu || !event.organizer || !event.place) {
+            console.warn(`Invalid event at index ${index}`, event);
+            return null; 
+          }
 
-            {/* Type Indicator */}
-            {event.tip === 'Obligatoriu' ? (
-              <div className="vertical-bar-red">
+          const formattedDate = event.data
+            ? new Date(event.data).toLocaleDateString("ro-RO")
+            : "Unknown Date";
+
+          const organizerName = event.organizer?.nume || "Unknown Organizer";
+          const placeDetails = event.place
+            ? `${event.place.oras || "Unknown City"}, ${event.place.strada || "Unknown Street"}`
+            : "Unknown Location";
+
+          return (
+            <div key={event.id || index} className="display-more-events-css">
+              {/* Date and Time */}
+              <div className="data-ora-div">
+                <div className="data-div">
+                  <div className="date-icon-date-css-1">
+                    <DateIcon />
+                  </div>
+                  <div className="data-css">{formattedDate}</div>
+                </div>
+                <div className="clock-div">
+                  <div className="date-icon-date-css-1">
+                    <ClockIcon />
+                  </div>
+                  <div className="ora-css">{event.ora || "Unknown Time"}</div>
+                </div>
+              </div>
+
+              {/* Type Indicator */}
+              <div
+                className={
+                  event.tip === "Obligatoriu"
+                    ? "vertical-bar-red"
+                    : "vertical-bar-blue"
+                }
+              >
                 <hr />
               </div>
-            ) : (
-              <div className="vertical-bar-blue">
-                <hr />
-              </div>
-            )}
 
-            {/* Event Details */}
-            <div className="titlu-org-loc-css">
-              <h4 className="tile-css-more">{event.titlu}</h4>
-              <p className="descriere-css-more">{event.descriere}</p>
-              <div className="organizer-css">
-                <div className="event-detail-icon-more">
-                  <OrganizerIcon />
+              {/* Event Details */}
+              <div className="titlu-org-loc-css">
+                <h4 className="tile-css-more">{event.titlu}</h4>
+                <p className="descriere-css-more">{event.descriere || "No description available."}</p>
+                <div className="organizer-css">
+                  <div className="event-detail-icon-more">
+                    <OrganizerIcon />
+                  </div>
+                  <div className="event-detail-text-more">{organizerName}</div>
                 </div>
-                <div className="event-detail-text-more">
-                  {event.organizer.nume}
-                </div>
-              </div>
-              <div className="place-css">
-                <div className="event-detail-icon-more">
-                  <PlaceIcon />
-                </div>
-                <div className="event-detail-text-more">
-                  {event.place.oras}, {event.place.strada}
+                <div className="place-css">
+                  <div className="event-detail-icon-more">
+                    <PlaceIcon />
+                  </div>
+                  <div className="event-detail-text-more">{placeDetails}</div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Back Button */}
@@ -373,3 +382,5 @@ export const DisplayFavEvents = ({ favoritedEvents, onBack }) => {
     </div>
   );
 };
+
+export default DisplayFavEvents;
