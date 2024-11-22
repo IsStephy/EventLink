@@ -16,8 +16,8 @@
     - Developed functions to save and display favorite events.  
     - Enhanced user experience by providing a simple and intuitive way for users to select and favorite events.  
   - **Related Front-End Updates**:  
-    - [Image 1](Images/1.jpg)  
-    - [Image 2](Images/2.jpg)  
+    - [Image 1](Images/1.png)  
+    - [Image 2](Images/2.png)  
 
 ---
 
