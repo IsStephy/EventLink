@@ -5,8 +5,8 @@
   - Started deployment of the new release.  
   - Encountered issues with the backend deployment process. Currently investigating and resolving these issues.  
   - **Related Images**:  
-    - ![Login Page Deployment](https://drive.google.com/file/d/1GjjPIRy92s9uO3DNG6Dzv8WdJtvlxk1j/view?usp=sharing "Login Page Deployment")  
-    - ![Home Page Deployment](https://drive.google.com/file/d/18B8CnsQ20QGIlW3tkOaEOR_-mWa1HQTp/view?usp=sharing "Home Page Deployment")  
+    - ![Login Page Deployment](Images/3.png) 
+    - ![Home Page Deployment](Images/4.png) 
 
 ## November 18 – November 21  
 - **Add to Favorites Feature**:  
@@ -16,8 +16,8 @@
     - Developed functions to save and display favorite events.  
     - Enhanced user experience by providing a simple and intuitive way for users to select and favorite events.  
   - **Related Front-End Updates**:  
-    - [Image 1](https://drive.google.com/file/d/1Tf61BN6f8n-N3sKaYLQ4fUnXkwzof0Ch/view?usp=sharing)  
-    - [Image 2](https://drive.google.com/file/d/1e-ItMNJOVfWEWux50IwN74J7ZgwYZEWj/view?usp=sharing)  
+    - [Image 1](Images/1.jpg)  
+    - [Image 2](Images/2.jpg)  
 
 ---
 
