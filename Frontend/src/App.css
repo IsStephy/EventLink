@@ -980,4 +980,10 @@ body, .upcoming-events {
   margin-top: -13px;
 }
 
+.favorite-events-title {
+  margin-top: 180px;
+  margin-bottom: -140px;
+  margin-left: 16px;
+}
+
 
