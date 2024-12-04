@@ -21,7 +21,7 @@ function App() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [expandedEventId, setExpandedEventId] = useState(null);
   const [error, setError] = useState(null);
-  const [userEmail, setUserEmail] = useState(localStorage.getItem('userEmail')); // Get from login
+  const [userEmail, setUserEmail] = useState(localStorage.getItem('userEmail')); 
   const [favoritedEvents, setFavoritedEvents] = useState([]);
   const [isViewingFavorites, setIsViewingFavorites] = useState(false);
 
@@ -154,17 +154,20 @@ function App() {
     setSearchPerformed(true);
     setSelectedEvent(null);
     setClickedEvents([]);
+    setIsViewingFavorites(false);
     setInputValue('');
   };
 
   const handleEventCalendarClick = (event) => {
     setSelectedEvent(event);
+    setIsViewingFavorites(false);
     setSearchPerformed(false);
     setClickedEvents([]);
   };
 
   const handleShowAllEvents = (events) => {
     setClickedEvents(events);
+    setIsViewingFavorites(false);
     setSelectedEvent(null);
     setSearchPerformed(false);
     setFilteredEvents([]);
@@ -243,8 +246,9 @@ function App() {
           <div className='more-events-container-css'>
             {clickedEvents.map((event, index) => (
               <DisplayMoreEvents 
-                key={index}
-                event={event}
+              event={event} 
+              onFavorite={handleFavorite} 
+              favoritedEvents={favoritedEvents}
               />
             ))}
           </div>
@@ -294,7 +298,6 @@ function App() {
           ? prev.filter(fav => fav.id !== event.id)
           : [...prev, event];
         
-        // Update localStorage
         localStorage.setItem('favoritedEvents', JSON.stringify(newFavorites));
         return newFavorites;
       });
@@ -382,7 +385,7 @@ function App() {
                             <DisplayMoreEvents
                               key={index}
                               event={event}
-                              onFavorite={handleFavorite} // Pass handleFavorite here
+                              onFavorite={handleFavorite} 
                               isFavorited={favoritedEvents.includes(event)}
                             />
                           ))}
@@ -426,6 +429,7 @@ function App() {
                   setClickedEvents([]);
                   setFilteredEvents([]);
                   setExpandedEventId(null);
+                  setIsViewingFavorites(false);
                 }}
               />
               <div className="icon-calendar-text-css">
@@ -436,6 +440,7 @@ function App() {
                     setClickedEvents([]);
                     setFilteredEvents([]);
                     setExpandedEventId(null);
+                    setIsViewingFavorites(false);
                   }}
                 />
                 <div className="calendar-text-css">Calendar</div>

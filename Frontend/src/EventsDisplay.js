@@ -248,8 +248,8 @@ export const DisplayMoreEvents = ({ event, onFavorite, favoritedEvents = [] }) =
           <div 
             className="star-more-items" 
             onClick={(e) => {
-              e.stopPropagation(); // Prevent click propagation
-              onFavorite(event);   // Trigger the favorite toggle function
+              e.stopPropagation(); 
+              onFavorite(event);  
             }}
             aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
           >
@@ -262,8 +262,8 @@ export const DisplayMoreEvents = ({ event, onFavorite, favoritedEvents = [] }) =
           <div 
             className="star-more-items" 
             onClick={(e) => {
-              e.stopPropagation(); // Prevent click propagation
-              onFavorite(event);   // Trigger the favorite toggle function
+              e.stopPropagation();
+              onFavorite(event);  
             }}
             aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
           >
