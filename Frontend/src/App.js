@@ -408,6 +408,7 @@ function App() {
                         event={selectedEvent}
                         onBack={handleBackClick}
                         onFavorite={handleFavorite}
+                        favoritedEvents={favoritedEvents}
                         isFavorited={favoritedEvents.includes(selectedEvent)}
                       />
                     )}
