@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faMapMarkerAlt, faChevronDown,faChevronUp, faCalendarDay, faClock, faTag, faArrowLeft} from '@fortawesome/free-solid-svg-icons';
 import { StarIcon, DateIcon, PointIcon, ShowMoreIcon, ShowLessButton, VerticalBar, ClockIcon, PlaceIcon, OrganizerIcon} from './Icons';
@@ -298,8 +298,58 @@ DisplayMoreEvents.defaultProps = {
   favoritedEvents: [],
 };
 
-export const DisplayFavEvents = ({ favoritedEvents, onBack }) => {
-  if (!Array.isArray(favoritedEvents) || favoritedEvents.length === 0) {
+const EventCard = ({ event }) => {
+  if (!event) return null;
+
+  const formattedDate = event.data
+    ? new Date(event.data).toLocaleDateString("ro-RO")
+    : "Unknown Date";
+
+  const organizerName = event.organizer?.nume || "Unknown Organizer";
+  const placeDetails = event.place
+    ? `${event.place.oras || "Unknown City"}, ${event.place.strada || "Unknown Street"}`
+    : "Unknown Location";
+
+  return (
+    <div key={event.id} className="display-more-events-css">
+      <div className="data-ora-div">
+        <div className="data-div">
+          <div className="date-icon-date-css-1"><DateIcon /></div>
+          <div className="data-css">{formattedDate}</div>
+        </div>
+        <div className="clock-div">
+          <div className="date-icon-date-css-1"><ClockIcon /></div>
+          <div className="ora-css">{event.ora || "Unknown Time"}</div>
+        </div>
+      </div>
+      <div className={event.tip === "Obligatoriu" ? "vertical-bar-red" : "vertical-bar-blue"}>
+        <hr />
+      </div>
+      <div className="titlu-org-loc-css">
+        <h4 className="tile-css-more">{event.titlu}</h4>
+        <p className="descriere-css-more">{event.descriere || "No description available."}</p>
+        <div className="organizer-css">
+          <div className="event-detail-icon-more"><OrganizerIcon /></div>
+          <div className="event-detail-text-more">{organizerName}</div>
+        </div>
+        <div className="place-css">
+          <div className="event-detail-icon-more"><PlaceIcon /></div>
+          <div className="event-detail-text-more">{placeDetails}</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const DisplayFavEvents = ({ onBack }) => {
+  const [favoritedEvents, setFavoritedEvents] = useState([]);
+
+  useEffect(() => {
+    const storedEvents = JSON.parse(localStorage.getItem("favoritedEvents")) || [];
+    setFavoritedEvents(storedEvents);
+  }, []);
+
+  if (!favoritedEvents.length) {
     return <p className="no-favorites-text">No favorite events found.</p>;
   }
 
@@ -307,80 +357,13 @@ export const DisplayFavEvents = ({ favoritedEvents, onBack }) => {
     <div className="favorite-events-container">
       <h2 className="favorite-events-title">Favorite Events</h2>
       <div className="more-events-container-css">
-        {favoritedEvents.map((event, index) => {
-          if (!event || !event.titlu || !event.organizer || !event.place) {
-            console.warn(`Invalid event at index ${index}`, event);
-            return null; 
-          }
-
-          const formattedDate = event.data
-            ? new Date(event.data).toLocaleDateString("ro-RO")
-            : "Unknown Date";
-
-          const organizerName = event.organizer?.nume || "Unknown Organizer";
-          const placeDetails = event.place
-            ? `${event.place.oras || "Unknown City"}, ${event.place.strada || "Unknown Street"}`
-            : "Unknown Location";
-
-          return (
-            <div key={event.id || index} className="display-more-events-css">
-              {/* Date and Time */}
-              <div className="data-ora-div">
-                <div className="data-div">
-                  <div className="date-icon-date-css-1">
-                    <DateIcon />
-                  </div>
-                  <div className="data-css">{formattedDate}</div>
-                </div>
-                <div className="clock-div">
-                  <div className="date-icon-date-css-1">
-                    <ClockIcon />
-                  </div>
-                  <div className="ora-css">{event.ora || "Unknown Time"}</div>
-                </div>
-              </div>
-
-              {/* Type Indicator */}
-              <div
-                className={
-                  event.tip === "Obligatoriu"
-                    ? "vertical-bar-red"
-                    : "vertical-bar-blue"
-                }
-              >
-                <hr />
-              </div>
-
-              {/* Event Details */}
-              <div className="titlu-org-loc-css">
-                <h4 className="tile-css-more">{event.titlu}</h4>
-                <p className="descriere-css-more">{event.descriere || "No description available."}</p>
-                <div className="organizer-css">
-                  <div className="event-detail-icon-more">
-                    <OrganizerIcon />
-                  </div>
-                  <div className="event-detail-text-more">{organizerName}</div>
-                </div>
-                <div className="place-css">
-                  <div className="event-detail-icon-more">
-                    <PlaceIcon />
-                  </div>
-                  <div className="event-detail-text-more">{placeDetails}</div>
-                </div>
-              </div>
-            </div>
-          );
-        })}
+        {favoritedEvents.map((event) => (
+          <EventCard key={event.id || event.titlu} event={event} />
+        ))}
       </div>
-
-      {/* Back Button */}
       <div className="back-button-container">
-        <button onClick={onBack} className="back-button">
-          Back
-        </button>
+        <button onClick={onBack} className="back-button">Back</button>
       </div>
     </div>
   );
 };
-
-export default DisplayFavEvents;

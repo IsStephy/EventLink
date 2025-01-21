@@ -22,7 +22,11 @@ function App() {
   const [expandedEventId, setExpandedEventId] = useState(null);
   const [error, setError] = useState(null);
   const [userEmail, setUserEmail] = useState(localStorage.getItem('userEmail')); 
-  const [favoritedEvents, setFavoritedEvents] = useState([]);
+  const [favoritedEvents, setFavoritedEvents] = React.useState(() => {
+  const storedFavorites = localStorage.getItem('favoritedEvents');
+  return storedFavorites ? JSON.parse(storedFavorites) : [];
+});
+
   const [isViewingFavorites, setIsViewingFavorites] = useState(false);
 
 
