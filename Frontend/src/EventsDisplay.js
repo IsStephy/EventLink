@@ -259,10 +259,10 @@ const EventCard = ({ event }) => {
     ? new Date(event.data).toLocaleDateString("ro-RO")
     : "Unknown Date";
 
-  const organizerName = event.organizer?.nume || "asdfgh";
+  const organizerName = event.organizer?.nume || "Universitatea Tehnică a Moldovei";
   const placeDetails = event.place
     ? `${event.place.oras || "Unknown City"}, ${event.place.strada || "Unknown Street"}`
-    : "Unknown Location";
+    : "Chișinău, Strada Miorița 27";
 
   return (
     <div key={event.id} className="display-more-events-css">
