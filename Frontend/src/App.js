@@ -257,6 +257,7 @@ function App() {
           <div className='more-events-container-css'>
             {clickedEvents.map((event, index) => (
               <DisplayMoreEvents 
+              key={index}
               event={event} 
               onFavorite={handleFavorite} 
               favoritedEvents={favoritedEvents}

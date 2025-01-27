@@ -295,6 +295,10 @@ const EventCard = ({ event }) => {
   );
 };
 
+EventCard.defaultProps = {
+  favoritedEvents: [],
+};
+
 export const DisplayFavEvents = ({ onBack }) => {
   const [favoritedEvents, setFavoritedEvents] = useState([]);
 
