@@ -21,11 +21,16 @@ function App() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [expandedEventId, setExpandedEventId] = useState(null);
   const [error, setError] = useState(null);
-  const [userEmail, setUserEmail] = useState(localStorage.getItem('userEmail')); 
-  const [favoritedEvents, setFavoritedEvents] = React.useState(() => {
-  const storedFavorites = localStorage.getItem('favoritedEvents');
-  return storedFavorites ? JSON.parse(storedFavorites) : [];
-});
+  const [userEmail] = useState(localStorage.getItem('userEmail')); 
+  const [favoritedEvents, setFavoritedEvents] = useState(() => {
+    try {
+      const stored = localStorage.getItem('favoritedEvents');
+      return stored ? JSON.parse(stored) : [];
+    } catch (error) {
+      console.error('Error loading favorites:', error);
+      return [];
+    }
+  });
 
   const [isViewingFavorites, setIsViewingFavorites] = useState(false);
 
@@ -132,20 +137,22 @@ function App() {
         if (!response.ok) throw new Error('Failed to fetch favorites');
         const data = await response.json();
         
-        setFavoritedEvents(data);
-        localStorage.setItem('favoritedEvents', JSON.stringify(data));
+        // Merge with existing local favorites
+        const mergedFavorites = [...new Map([
+          ...favoritedEvents,
+          ...data
+        ].map(event => [event.id, event])).values()];
+        
+        setFavoritedEvents(mergedFavorites);
+        localStorage.setItem('favoritedEvents', JSON.stringify(mergedFavorites));
       } catch (error) {
         console.error('Error fetching favorites:', error);
-        const saved = localStorage.getItem('favoritedEvents');
-        if (saved) {
-          setFavoritedEvents(JSON.parse(saved));
-        }
       }
     };
 
     fetchAndOrganizeEvents();
     fetchFavorites();
-  }, [userEmail]);
+  }, [favoritedEvents.length]);
 
   const handleSearchClick = () => {
     const searchQuery = inputValue.toLowerCase();
@@ -300,7 +307,7 @@ function App() {
         const isCurrentlyFavorited = prev.some(fav => fav.id === event.id);
         const newFavorites = isCurrentlyFavorited
           ? prev.filter(fav => fav.id !== event.id)
-          : [...prev, event];
+          : [...prev, {...event}];
         
         localStorage.setItem('favoritedEvents', JSON.stringify(newFavorites));
         return newFavorites;
@@ -308,6 +315,16 @@ function App() {
   
     } catch (error) {
       console.error('Error toggling favorite:', error);
+      // Fallback to local toggle if API fails
+      setFavoritedEvents(prev => {
+        const isCurrentlyFavorited = prev.some(fav => fav.id === event.id);
+        const newFavorites = isCurrentlyFavorited
+          ? prev.filter(fav => fav.id !== event.id)
+          : [...prev, {...event}];
+        
+        localStorage.setItem('favoritedEvents', JSON.stringify(newFavorites));
+        return newFavorites;
+      });
     }
   };
 
